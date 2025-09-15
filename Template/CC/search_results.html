@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        /* Purple Theme Color Variables */
+        --primary-purple: #8a2be2;
+        --dark-purple: #6a1b9a;
+        --light-purple: #ba68c8;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(138, 43, 226, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(138, 43, 226, 0.2);
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+        position: relative;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Particle Background Canvas */
+    .particle-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+    }
+
+    /* Search Header */
+    .search-header {
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(5px);
+        z-index: 10;
+    }
+
+    .search-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, 
+            rgba(138, 43, 226, 0.1) 0%, 
+            rgba(106, 27, 154, 0.05) 50%, 
+            transparent 70%);
+        animation: glowPulse 8s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes glowPulse {
+        0% { transform: scale(0.8); opacity: 0.3; }
+        50% { transform: scale(1.2); opacity: 0.5; }
+        100% { transform: scale(0.8); opacity: 0.3; }
+    }
+
+    /* Results Container */
+    .results-container {
+        background: var(--card-bg);
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+        backdrop-filter: blur(5px);
+        z-index: 10;
+    }
+
+    .results-container:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+    }
+
+    /* Section Headers */
+    .section-header {
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        color: white;
+        padding: 1rem 1.5rem;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-header i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Result Cards */
+    .result-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        background: var(--card-bg);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(138, 43, 226, 0.15);
+    }
+
+    .result-card img {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .result-card:hover img {
+        transform: scale(1.03);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-text {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn-view {
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        color: white;
+    }
+
+    .btn-view::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+        );
+        transition: all 0.6s ease;
+    }
+
+    .btn-view:hover::before {
+        left: 100%;
+    }
+
+    /* No Results Message */
+    .no-results {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--shadow-light);
+        position: relative;
+        z-index: 10;
+    }
+
+    .no-results i {
+        font-size: 3rem;
+        color: var(--primary-purple);
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Animation */
+    .animate-card {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Container with z-index to ensure content is above particles */
+    .container {
+        position: relative;
+        z-index: 10;
+    }
+</style>
+
+<!-- Particle Background Canvas -->
+<canvas class="particle-background" id="particleCanvas"></canvas>
+
+<div class="container mt-4">
+    <div class="search-header animate__animated animate__fadeIn">
+        <h2 class="mb-2"><i class="fas fa-search"></i> Search Results for "{{ query }}"</h2>
+        <p class="mb-0">{{ results_count }} result(s) found</p>
+    </div>
+    
+    {% if results_count > 0 %}
+        <!-- Institute Results -->
+        {% if institute_results %}
+            <div class="results-container animate__animated animate__fadeInUp mb-4">
+                <div class="section-header">
+                    <i class="fas fa-university"></i>
+                    <h4 class="mb-0">Institutions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for institute in institute_results %}
+                            <div class="col-md-4 mb-4 animate-card" style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
+                                <div class="result-card h-100">
+                                    {% if institute.images.first %}
+                                        <img src="{{ institute.images.first.image.url }}" class="card-img-top" alt="{{ institute.title }}">
+                                    {% else %}
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="fas fa-university fa-4x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ institute.title }}</h5>
+                                        <p class="card-text">{{ institute.description|truncatewords:30 }}</p>
+                                        <a href="{% url 'institute_detail' institute.id %}" class="btn btn-view">
+                                            <i class="fas fa-eye mr-1"></i> View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Circular Results -->
+        {% if circular_results %}
+            <div class="results-container animate__animated animate__fadeInUp">
+                <div class="section-header">
+                    <i class="fas fa-file-alt"></i>
+                    <h4 class="mb-0">Circulars</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for circular in circular_results %}
+                            <div class="col-md-4 mb-4 animate-card" style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
+                                <div class="result-card h-100">
+                                    {% if circular.image %}
+                                        <img src="{{ circular.image.url }}" class="card-img-top" alt="{{ circular.title }}">
+                                    {% else %}
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="fas fa-file-alt fa-4x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ circular.title }}</h5>
+                                        <p class="card-text">{{ circular.details|truncatewords:30 }}</p>
+                                        <a href="#" class="btn btn-view">
+                                            <i class="fas fa-external-link-alt mr-1"></i> View Circular
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-results animate__animated animate__fadeIn">
+            <i class="fas fa-search-minus"></i>
+            <h3>No results found for "{{ query }}"</h3>
+            <p class="text-muted">Try different search terms or check your spelling</p>
+            <a href="{% url 'Home' %}" class="btn btn-view">
+                <i class="fas fa-home mr-1"></i> Return Home
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Interactive Particle Background
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Mouse position tracking
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    document.addEventListener('mousemove', function(event) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+    
+    // Purple-themed particle colors
+    const purpleColors = [
+        'hsla(271, 76%, 53%, 0.7)',    // Primary purple
+        'hsla(271, 65%, 60%, 0.7)',    // Lighter purple
+        'hsla(271, 45%, 70%, 0.7)',    // Light purple
+        'hsla(271, 35%, 80%, 0.7)'      // Very light purple
+    ];
+    
+    // Particle constructor
+    function Particle() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 4 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.color = purpleColors[Math.floor(Math.random() * purpleColors.length)];
+        this.angle = 0;
+        this.velocity = Math.random() * 0.02;
+        this.radius = Math.random() * 50 + 50;
+        this.distanceToMouse = 0;
+        this.affectedByMouse = false;
+    }
+    
+    // Update particle position
+    Particle.prototype.update = function() {
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+        
+        if (this.distanceToMouse < 150) {
+            this.affectedByMouse = true;
+            const forceDirectionX = dx / this.distanceToMouse;
+            const forceDirectionY = dy / this.distanceToMouse;
+            const force = (150 - this.distanceToMouse) / 150 * 2;
+            
+            this.x -= forceDirectionX * force;
+            this.y -= forceDirectionY * force;
+        } else {
+            this.affectedByMouse = false;
+            this.angle += this.velocity;
+            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
+            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
+        }
+        
+        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+    };
+    
+    // Draw particle
+    Particle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        
+        if (this.affectedByMouse) {
+            ctx.fillStyle = 'hsla(271, 76%, 60%, 0.9)';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(138, 43, 226, 0.7)';
+        } else {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(138, 43, 226, 0.5)';
+        }
+        
+        ctx.fill();
+    };
+    
+    // Create particles
+    let particles = [];
+    const particleCount = window.innerWidth < 768 ? 80 : 150;
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw connecting lines
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+                const dx = particles[a].x - particles[b].x;
+                const dy = particles[a].y - particles[b].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `hsla(271, 76%, 53%, ${1 - distance/150})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                }
+            }
+            particles[a].update();
+            particles[a].draw();
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Add animation to cards
+    const cards = document.querySelectorAll('.animate-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${(index % 3) * 0.2 + 0.2}s`;
+    });
+    
+    // Add hover effect to cards
+    const resultCards = document.querySelectorAll('.result-card');
+    resultCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-5px)';
+            card.style.boxShadow = '0 12px 25px rgba(138, 43, 226, 0.15)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+            card.style.boxShadow = '';
+        });
+    });
+
+    // Card tilt effect
+    const containers = document.querySelectorAll('.results-container, .no-results');
+    $(document).on('mousemove', function(e) {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        containers.forEach(container => {
+            $(container).css({
+                'transform': `perspective(1000px) rotateX(${(y - 0.5) * -2}deg) rotateY(${(x - 0.5) * 2}deg) translateY(0)`
+            });
+        });
+    });
+    
+    containers.forEach(container => {
+        container.addEventListener('mouseleave', () => {
+            container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

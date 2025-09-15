@@ -1,0 +1,320 @@
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3 class="footer-title">Campus Compass</h3>
+            <p class="footer-text">Your trusted guide to higher education opportunities.</p>
+            <div class="footer-social">
+                <a href="https://www.facebook.com/profile.php?id=100010362366893" class="social-icon" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="https://www.instagram.com/__depressune__/" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/farhana-hoque-mahima-607939278/" class="social-icon" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <h4 class="footer-subtitle">Quick Links</h4>
+            <ul class="footer-links">
+                <li><a href="/home/" class="footer-link">Home</a></li>
+                <li><a href="/universities/" class="footer-link">Universities</a></li>
+                <li><a href="/colleges/" class="footer-link">Colleges</a></li>
+                <li><a href="/circulars/" class="footer-link">Admission Circulars</a></li>
+                
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h4 class="footer-subtitle">Resources</h4>
+            <ul class="footer-links">
+                <li><a href="/blog/" class="footer-link">Blog</a></li>
+                <li><a href="/faq/" class="footer-link">FAQ</a></li>
+                <li><a href="/contact/" class="footer-link">Contact Us</a></li>
+                <li><a href="/privacy/" class="footer-link">Privacy Policy</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h4 class="footer-subtitle">Newsletter</h4>
+            <form class="footer-newsletter">
+                <input type="email" placeholder="Your email address" class="newsletter-input">
+                <button type="submit" class="newsletter-btn">Subscribe</button>
+            </form>
+            <p class="footer-text">Get the latest updates on admissions and scholarships.</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p class="copyright">&copy; <span id="year"></span> Campus Compass. All rights reserved.</p>
+        <div class="footer-legal">
+            <a href="/terms/" class="legal-link">Terms of Service</a>
+            <span class="legal-separator">|</span>
+            <a href="/privacy/" class="legal-link">Privacy Policy</a>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* Footer Styles */
+    .site-footer {
+        background: linear-gradient(135deg, rgba(26, 58, 143, 0.98) 0%, rgba(58, 111, 217, 0.95) 100%);
+        color: white;
+        padding: 4rem 2rem 2rem;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+    
+    .site-footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+        z-index: 0;
+    }
+    
+    .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .footer-section {
+        padding: 0 1rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .footer-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: white;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .footer-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--light-blue);
+        border-radius: 3px;
+    }
+    
+    .footer-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        opacity: 0.9;
+    }
+    
+    .footer-subtitle {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+        position: relative;
+    }
+    
+    .footer-subtitle::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: var(--light-blue);
+    }
+    
+    .footer-links {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .footer-link {
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 0.5rem 0;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .footer-link::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--light-blue);
+        transition: width 0.3s ease;
+    }
+    
+    .footer-link:hover {
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    .footer-link:hover::before {
+        width: 20px;
+    }
+    
+    .footer-social {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .social-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .social-icon:hover {
+        background: var(--light-blue);
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 4px 12px rgba(152, 193, 255, 0.3);
+    }
+    
+    .footer-newsletter {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+    
+    .newsletter-input {
+        flex: 1;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        font-size: 0.9rem;
+    }
+    
+    .newsletter-btn {
+        background: var(--light-blue);
+        color: var(--dark-blue);
+        border: none;
+        padding: 0 1.2rem;
+        font-weight: 600;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .newsletter-btn:hover {
+        background: white;
+    }
+    
+    .footer-bottom {
+        max-width: 1400px;
+        margin: 3rem auto 0;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .copyright {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin: 0.5rem 0;
+    }
+    
+    .footer-legal {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .legal-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+    
+    .legal-link:hover {
+        color: white;
+    }
+    
+    .legal-separator {
+        opacity: 0.5;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Stagger animations for footer sections */
+    .footer-section:nth-child(1) { animation-delay: 0.1s; }
+    .footer-section:nth-child(2) { animation-delay: 0.2s; }
+    .footer-section:nth-child(3) { animation-delay: 0.3s; }
+    .footer-section:nth-child(4) { animation-delay: 0.4s; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .footer-content {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .footer-bottom {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .footer-section {
+            padding: 0;
+        }
+    }
+</style>
+
+<script>
+    // Update copyright year automatically
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>

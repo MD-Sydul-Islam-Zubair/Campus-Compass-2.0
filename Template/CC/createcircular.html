@@ -1,0 +1,1507 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        /* Brown Theme Color Variables */
+        --primary-brown: #8B4513;  /* SaddleBrown */
+        --dark-brown: #5D4037;     /* DarkBrown */
+        --light-brown: #A1887F;    /* LightBrown */
+        --card-bg: rgba(139, 69, 19, 0.1);
+        --card-border: rgba(161, 136, 127, 0.3);
+        --text-glow: 0 0 15px rgba(161, 136, 127, 0.4);
+        --modal-bg: rgba(30, 20, 15, 0.96);
+        --modal-border: rgba(255, 255, 255, 0.15);
+        --hover-glow: 0 0 20px rgba(161, 136, 127, 0.3);
+    }
+    
+    /* Particle Background Canvas */
+    .particle-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #F5F1EE 0%, #E8E0DB 100%);
+    }
+    
+    /* Base Card Styles */
+    .circular-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(93, 64, 55, 0.25);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 450px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Card Hover Effects */
+    .circular-card:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 20px 40px rgba(93, 64, 55, 0.35), 
+                    var(--hover-glow);
+        border-color: var(--light-brown);
+    }
+
+    .circular-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            135deg, 
+            rgba(139, 69, 19, 0.2) 0%, 
+            transparent 70%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+    }
+
+    .circular-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Card Content Styles */
+    .circular-image-container {
+        height: 280px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .institute-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s ease;
+    }
+
+    .institute-logo {
+        position: absolute;
+        bottom: -25px;
+        right: 25px;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 3px solid white;
+        background: white;
+        object-fit: contain;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        z-index: 2;
+        transition: all 0.4s ease;
+    }
+
+    .circular-card:hover .institute-logo {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+    }
+
+    .circular-content {
+        padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .institute-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--dark-brown);
+        text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .admission-period {
+        font-size: 1.05rem;
+        background: rgba(139, 69, 19, 0.35);
+        color: white;
+        display: inline-block;
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        margin-bottom: 1.25rem;
+        backdrop-filter: blur(5px);
+        box-shadow: inset 0 0 15px rgba(255,255,255,0.1);
+    }
+
+    .view-details-btn {
+        background: var(--primary-brown);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 0.8rem 2rem;
+        font-weight: 500;
+        margin-top: auto;
+        align-self: flex-start;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .view-details-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg, 
+            transparent, 
+            rgba(255,255,255,0.25), 
+            transparent
+        );
+        transition: 0.6s;
+    }
+
+    .view-details-btn:hover {
+        background: var(--dark-brown);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.45);
+    }
+
+    .view-details-btn:hover::before {
+        left: 100%;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+        background-color: transparent !important;
+        backdrop-filter: blur(20px);
+        opacity: 1 !important;
+    }
+
+    .modal-backdrop.show {
+        opacity: 1 !important;
+    }
+
+    .circular-modal .modal-content,
+    .contact-info-modal .modal-content,
+    .update-modal .modal-content,
+    .delete-modal .modal-content {
+        background: var(--modal-bg);
+        border-radius: 20px;
+        color: white;
+        border: 1px solid var(--modal-border);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        transform: scale(0.95);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+    }
+
+    .modal.show .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--modal-border);
+        background: rgba(0, 0, 0, 0.4);
+        padding: 1.75rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        font-size: 1.75rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .modal-title i {
+        margin-right: 15px;
+        color: var(--light-brown);
+        font-size: 1.5rem;
+    }
+
+    /* Circular Modal Specific */
+    .modal-image-content {
+        position: relative;
+        overflow: hidden;
+        cursor: zoom-in;
+        height: 100%;
+        touch-action: none;
+    }
+
+    .modal-image-content.zoomed {
+        cursor: grab;
+    }
+
+    .modal-image-content img {
+        transition: transform 0.3s ease;
+        transform-origin: center center;
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .modal-image-content.zoomed:active {
+        cursor: grabbing;
+    }
+
+    .zoomable-image {
+        transition: transform 0.3s ease;
+        transform-origin: 0 0;
+        width: 100%;
+        height: auto;
+        display: block;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .zoom-controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+        background: rgba(0,0,0,0.5);
+        padding: 8px;
+        border-radius: 25px;
+    }
+
+    .zoom-btn {
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .zoom-btn:hover {
+        background: var(--primary-brown);
+        transform: scale(1.1);
+    }
+
+    .zoom-btn i {
+        pointer-events: none;
+    }
+    .modal-image-container {
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modal-image-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(12px) brightness(0.6);
+        opacity: 0.5;
+        z-index: 0;
+        transform: scale(1.1);
+    }
+
+    .modal-image-content {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 500px;
+    }
+
+    .modal-image-content img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 15px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        transition: transform 0.5s ease;
+    }
+
+    .modal-image-content img:hover {
+        transform: scale(1.03);
+    }
+
+    .modal-details-col {
+        padding: 2.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .programs-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--modal-border);
+        box-shadow: inset 0 0 25px rgba(255,255,255,0.03);
+    }
+
+    .programs-container h6 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        color: var(--light-brown);
+    }
+
+    .programs-container h6 i {
+        margin-right: 12px;
+    }
+
+    .details-container {
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(15px);
+        border-radius: 15px;
+        padding: 2rem;
+        border: 1px solid var(--modal-border);
+        box-shadow: inset 0 0 25px rgba(0,0,0,0.3);
+    }
+
+    /* Contact Modal Specific */
+    .contact-info {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-top: 1.5rem;
+        border: 1px solid var(--modal-border);
+        box-shadow: inset 0 0 25px rgba(255,255,255,0.03);
+    }
+
+    .contact-item {
+        margin-bottom: 1.75rem;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .contact-item i {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(161, 136, 127, 0.15);
+        border-radius: 50%;
+        margin-right: 18px;
+        font-size: 1.2rem;
+        color: var(--light-brown);
+        flex-shrink: 0;
+        border: 1px solid rgba(161, 136, 127, 0.3);
+    }
+
+    .contact-item h6 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--light-brown);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        justify-content: flex-end;
+        padding: 0 2rem;
+    }
+    
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        border: none;
+        font-size: 0.9rem;
+    }
+    
+    .update-btn {
+        background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+        color: white;
+    }
+    
+    .update-btn:hover {
+        background: linear-gradient(135deg, var(--dark-brown), var(--primary-brown));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(93, 64, 55, 0.4);
+    }
+    
+    .delete-btn {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+    
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(192, 57, 43, 0.4);
+    }
+
+    /* Delete Confirmation Modal */
+    .delete-modal .modal-content {
+        background: var(--modal-bg);
+        border-radius: 20px;
+        color: white;
+        border: 1px solid var(--modal-border);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        transform: scale(0.95);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        max-width: 500px;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .delete-modal .confirmation-icon {
+        font-size: 3.5rem;
+        color: #e74c3c;
+        margin: 1rem 0;
+    }
+    
+    .delete-modal .modal-title {
+        color: #e74c3c;
+        margin-bottom: 1rem;
+    }
+    
+    .delete-modal .confirmation-text {
+        margin-bottom: 2rem;
+    }
+    
+    .delete-modal .modal-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    /* Buttons */
+    .btn-outline-light {
+        border: 2px solid rgba(255,255,255,0.25);
+        background: transparent;
+        color: white;
+        padding: 0.7rem 1.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: white;
+        color: white;
+    }
+
+    .btn-primary {
+        background: var(--primary-brown);
+        border: none;
+        padding: 0.8rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.4);
+    }
+
+    .btn-primary:hover {
+        background: var(--dark-brown);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.5);
+    }
+
+    .btn-danger {
+        background: #e74c3c;
+        border: none;
+        padding: 0.8rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-danger:hover {
+        background: #c0392b;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(192, 57, 43, 0.5);
+    }
+
+    /* Animations */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes modalEntry {
+        0% {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+        50% {
+            opacity: 1;
+            transform: translateY(-10px) scale(1.02);
+        }
+        100% {
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes modalBgFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .modal.fade .modal-dialog {
+        animation: modalEntry 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .modal-backdrop.fade {
+        animation: modalBgFade 0.4s ease forwards;
+    }
+
+    .modal-content {
+        transform-origin: center bottom;
+    }
+
+    .modal-header {
+        animation: fadeInUp 0.5s ease 0.2s both;
+    }
+
+    .modal-body {
+        animation: fadeIn 0.6s ease 0.3s both;
+    }
+
+    .modal-footer {
+        animation: fadeInUp 0.5s ease 0.4s both;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1200px) {
+        .modal-image-content {
+            min-height: 450px;
+            padding: 2.5rem;
+        }
+        
+        .circular-card {
+            min-height: 420px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .circular-image-container {
+            height: 250px;
+        }
+        
+        .institute-logo {
+            width: 80px;
+            height: 80px;
+            bottom: -20px;
+            right: 20px;
+        }
+        
+        .modal-image-content {
+            min-height: 400px;
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .circular-card {
+            min-height: 380px;
+        }
+        
+        .circular-image-container {
+            height: 220px;
+        }
+        
+        .institute-logo {
+            width: 70px;
+            height: 70px;
+            bottom: -15px;
+            right: 15px;
+        }
+        
+        .modal-image-content {
+            min-height: 350px;
+            padding: 1.5rem;
+        }
+        
+        .modal-details-col {
+            padding: 1.75rem;
+        }
+        
+        .programs-container, 
+        .details-container,
+        .contact-info {
+            padding: 1.75rem;
+        }
+        
+        .action-buttons {
+            padding: 0 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .circular-card {
+            min-height: 350px;
+        }
+        
+        .circular-image-container {
+            height: 200px;
+        }
+        
+        .institute-logo {
+            width: 60px;
+            height: 60px;
+            bottom: -12px;
+            right: 12px;
+        }
+        
+        .modal-content {
+            margin: 1rem;
+        }
+        
+        .modal-image-content {
+            min-height: 300px;
+            padding: 1rem;
+        }
+        
+        .modal-header {
+            padding: 1.25rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+    .animate__animated {
+        --animate-duration: 0.5s;
+        opacity: 0;
+    }
+    
+    .animate__zoomIn {
+        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .animate__fadeInDown {
+        animation: fadeInDown 0.5s ease forwards;
+    }
+    
+    .animate__fadeInUp {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .animate__fadeInLeft {
+        animation: fadeInLeft 0.5s ease forwards;
+    }
+    
+    .animate__fadeInRight {
+        animation: fadeInRight 0.5s ease forwards;
+    }
+    
+    .animate__fadeIn {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .animate__pulse {
+        animation: pulse 1.5s infinite;
+    }
+    
+    /* Animation delays */
+    .animate__delay-1s {
+        animation-delay: 0.1s;
+    }
+    
+    .animate__delay-2s {
+        animation-delay: 0.2s;
+    }
+    
+    .animate__delay-3s {
+        animation-delay: 0.3s;
+    }
+    
+    .animate__delay-4s {
+        animation-delay: 0.4s;
+    }
+    
+    /* Keyframe animations */
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+     /* Custom Modal Styles */
+     .update-modal .modal-content {
+        border-radius: 12px;
+        overflow: hidden;
+        transform-origin: center;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .update-modal .form-group input:focus,
+    .update-modal .form-group textarea:focus,
+    .update-modal .form-group select:focus {
+        outline: none;
+        border-color: #d4a373 !important;
+        box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    /* Animation Styles */
+    .animate__animated {
+        --animate-duration: 0.5s;
+        opacity: 0;
+    }
+    
+    .animate__zoomIn {
+        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .animate__fadeInDown {
+        animation: fadeInDown 0.5s ease forwards;
+    }
+    
+    .animate__fadeInUp {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .animate__fadeInLeft {
+        animation: fadeInLeft 0.5s ease forwards;
+    }
+    
+    .animate__fadeInRight {
+        animation: fadeInRight 0.5s ease forwards;
+    }
+    
+    .animate__fadeIn {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .animate__pulse {
+        animation: pulse 1.5s infinite;
+    }
+    
+    /* Animation Delays */
+    .animate__delay-1s {
+        animation-delay: 0.1s;
+    }
+    
+    .animate__delay-2s {
+        animation-delay: 0.2s;
+    }
+    
+    .animate__delay-3s {
+        animation-delay: 0.3s;
+    }
+    
+    .animate__delay-4s {
+        animation-delay: 0.4s;
+    }
+    
+    /* Keyframe Animations */
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.03);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    /* Hover Effects */
+    .update-modal .btn-outline-light:hover {
+        background: rgba(212, 163, 115, 0.1) !important;
+        border-color: #d4a373 !important;
+        color: #d4a373 !important;
+    }
+    
+    .update-modal .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5) !important;
+        background: linear-gradient(135deg, #7B3D13, #5B2D13) !important;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .update-modal .modal-dialog {
+            margin: 1rem;
+        }
+        
+        .update-modal .modal-content {
+            border-radius: 8px;
+        }
+        
+        .update-modal .form-group {
+            margin-bottom: 1rem;
+        }
+    }
+      /* White and Brown Theme */
+      form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
+        background-color: rgba(255, 255, 255, 0.9);
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    form p {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        color: #5D4037;
+        font-weight: 500;
+        animation: slideInLeft 0.4s ease-out;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #D7CCC8;
+        border-radius: 4px;
+        background-color: #FFF;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #8D6E63;
+        box-shadow: 0 0 0 3px rgba(141, 110, 99, 0.2);
+        outline: none;
+    }
+
+    input[type="submit"] {
+        background-color: #8D6E63;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #6D4C41;
+        transform: translateY(-2px);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(141, 110, 99, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(141, 110, 99, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(141, 110, 99, 0);
+        }
+    }
+
+    /* Stagger animations for form elements */
+    form p:nth-child(1) { animation-delay: 0.1s; }
+    form p:nth-child(2) { animation-delay: 0.2s; }
+    form p:nth-child(3) { animation-delay: 0.3s; }
+    form p:nth-child(4) { animation-delay: 0.4s; }
+    form p:nth-child(5) { animation-delay: 0.5s; }
+</style>
+
+<!-- Particle Background Canvas -->
+<canvas class="particle-background" id="particleCanvas"></canvas>
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="submit">
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Interactive Particle Background
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Mouse position tracking
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    document.addEventListener('mousemove', function(event) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+    
+    // Brown-themed particle colors
+    const brownColors = [
+        'hsla(25, 75%, 35%, 0.7)',    // Darker brown
+        'hsla(25, 60%, 45%, 0.7)',     // Medium brown
+        'hsla(25, 50%, 60%, 0.7)',     // Light brown
+        'hsla(25, 40%, 70%, 0.7)'      // Very light brown
+    ];
+    
+    // Particle constructor
+    function Particle() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.color = brownColors[Math.floor(Math.random() * brownColors.length)];
+        this.angle = 0;
+        this.velocity = Math.random() * 0.02;
+        this.radius = Math.random() * 50 + 50;
+        this.distanceToMouse = 0;
+        this.affectedByMouse = false;
+    }
+    
+    // Update particle position
+    Particle.prototype.update = function() {
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+        
+        if (this.distanceToMouse < 150) {
+            this.affectedByMouse = true;
+            const forceDirectionX = dx / this.distanceToMouse;
+            const forceDirectionY = dy / this.distanceToMouse;
+            const force = (150 - this.distanceToMouse) / 150 * 2;
+            
+            this.x -= forceDirectionX * force;
+            this.y -= forceDirectionY * force;
+        } else {
+            this.affectedByMouse = false;
+            this.angle += this.velocity;
+            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
+            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
+        }
+        
+        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+    };
+    
+    // Draw particle
+    Particle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        
+        if (this.affectedByMouse) {
+            ctx.fillStyle = `hsla(25, 75%, 50%, 0.9)`;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(139, 69, 19, 0.7)';
+        } else {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(139, 69, 19, 0.5)';
+        }
+        
+        ctx.fill();
+    };
+    
+    // Create particles
+    let particles = [];
+    const particleCount = window.innerWidth < 768 ? 80 : 150;
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw connecting lines
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+                const dx = particles[a].x - particles[b].x;
+                const dy = particles[a].y - particles[b].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `hsla(25, 60%, 50%, ${1 - distance/150})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                }
+            }
+            particles[a].update();
+            particles[a].draw();
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Zoom and Pan Functionality
+    class ZoomSystem {
+        constructor(modalId) {
+            this.modalId = modalId;
+            this.currentScale = 1;
+            this.translateX = 0;
+            this.translateY = 0;
+            this.isDragging = false;
+            this.startX = 0;
+            this.startY = 0;
+            
+            this.container = document.querySelector(`#${modalId} .modal-image-content`);
+            if (!this.container) return;
+            
+            this.img = this.container.querySelector('.zoomable-image');
+            this.zoomInBtn = this.container.querySelector('.zoom-btn[title="Zoom In"]');
+            this.zoomOutBtn = this.container.querySelector('.zoom-btn[title="Zoom Out"]');
+            this.resetBtn = this.container.querySelector('.zoom-btn[title="Reset Zoom"]');
+            
+            this.initEvents();
+        }
+        
+        initEvents() {
+            if (!this.container) return;
+            
+            // Mouse events
+            this.container.addEventListener('mousedown', (e) => this.startDrag(e));
+            this.container.addEventListener('mousemove', (e) => this.drag(e));
+            this.container.addEventListener('mouseup', () => this.endDrag());
+            this.container.addEventListener('mouseleave', () => this.endDrag());
+            
+            // Touch events
+            this.container.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+            this.container.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+            this.container.addEventListener('touchend', () => this.endDrag());
+            
+            // Button events
+            if (this.zoomInBtn) {
+                this.zoomInBtn.addEventListener('click', () => this.zoomIn());
+            }
+            if (this.zoomOutBtn) {
+                this.zoomOutBtn.addEventListener('click', () => this.zoomOut());
+            }
+            if (this.resetBtn) {
+                this.resetBtn.addEventListener('click', () => this.resetZoom());
+            }
+            
+            // Double click to reset
+            this.container.addEventListener('dblclick', () => this.resetZoom());
+        }
+        
+        zoomIn() {
+            this.currentScale *= 1.5;
+            this.applyTransform();
+            this.container.classList.add('zoomed');
+        }
+        
+        zoomOut() {
+            this.currentScale /= 1.5;
+            if (this.currentScale <= 1) {
+                this.resetZoom();
+                return;
+            }
+            this.applyTransform();
+        }
+        
+        resetZoom() {
+            this.currentScale = 1;
+            this.translateX = 0;
+            this.translateY = 0;
+            this.applyTransform();
+            this.container.classList.remove('zoomed');
+        }
+        
+        applyTransform() {
+            if (this.img) {
+                this.img.style.transform = `matrix(${this.currentScale}, 0, 0, ${this.currentScale}, ${this.translateX}, ${this.translateY})`;
+            }
+        }
+        
+        startDrag(e) {
+            if (!this.container.classList.contains('zoomed')) return;
+            
+            this.isDragging = true;
+            this.startX = e.clientX || e.touches[0].clientX;
+            this.startY = e.clientY || e.touches[0].clientY;
+            this.container.style.cursor = 'grabbing';
+            e.preventDefault();
+        }
+        
+        drag(e) {
+            if (!this.isDragging) return;
+            
+            const currentX = e.clientX || e.touches[0].clientX;
+            const currentY = e.clientY || e.touches[0].clientY;
+            
+            this.translateX += (currentX - this.startX);
+            this.translateY += (currentY - this.startY);
+            
+            this.startX = currentX;
+            this.startY = currentY;
+            
+            this.applyTransform();
+            e.preventDefault();
+        }
+        
+        endDrag() {
+            this.isDragging = false;
+            if (this.container) {
+                this.container.style.cursor = 'grab';
+            }
+        }
+        
+        handleTouchStart(e) {
+            if (e.touches.length === 1) {
+                this.startDrag(e);
+            }
+        }
+        
+        handleTouchMove(e) {
+            if (e.touches.length === 1) {
+                this.drag(e);
+            }
+        }
+    }
+
+    // Initialize zoom systems for each modal
+    const zoomSystems = new Map();
+    document.querySelectorAll('.modal').forEach(modal => {
+        const modalId = modal.id;
+        if (modal.querySelector('.modal-image-content')) {
+            zoomSystems.set(modalId, new ZoomSystem(modalId));
+        }
+    });
+
+    // Fix for backdrop remaining after closing modal
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function() {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = 'auto';
+            document.body.style.paddingRight = '0';
+            
+            // Reset zoom state when modal closes
+            const zoomSystem = zoomSystems.get(modal.id);
+            if (zoomSystem) {
+                zoomSystem.resetZoom();
+            }
+        });
+    });
+
+    // Fix for contact modal transition
+    document.querySelectorAll('[data-bs-target^="#contactModal"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const circularModal = this.closest('.modal');
+            if (circularModal) {
+                const modalInstance = bootstrap.Modal.getInstance(circularModal);
+                modalInstance.hide();
+            }
+        });
+    });
+
+    // Show messages as toasts
+    {% if messages %}
+        {% for message in messages %}
+            showToast('{{ message.tags }}', '{{ message }}');
+        {% endfor %}
+    {% endif %}
+});
+
+function showToast(type, message) {
+    const toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    toastContainer.style.zIndex = '1100';
+    
+    const toast = document.createElement('div');
+    toast.className = `toast show align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
+    toast.role = 'alert';
+    toast.ariaLive = 'assertive';
+    toast.ariaAtomic = 'true';
+    
+    const toastBody = document.createElement('div');
+    toastBody.className = 'd-flex';
+    
+    const toastMessage = document.createElement('div');
+    toastMessage.className = 'toast-body';
+    toastMessage.textContent = message;
+    
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn-close btn-close-white me-2 m-auto';
+    closeButton.setAttribute('data-bs-dismiss', 'toast');
+    closeButton.ariaLabel = 'Close';
+    
+    toastBody.appendChild(toastMessage);
+    toastBody.appendChild(closeButton);
+    toast.appendChild(toastBody);
+    toastContainer.appendChild(toast);
+    
+    document.body.appendChild(toastContainer);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toastContainer.remove();
+        }, 300);
+    }, 5000);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize modal animations
+    const updateModals = document.querySelectorAll('.update-modal');
+    
+    updateModals.forEach(modal => {
+        modal.addEventListener('show.bs.modal', function() {
+            const modalContent = this.querySelector('.modal-content');
+            const animatedElements = this.querySelectorAll('.animate__animated');
+            
+            // Reset animations
+            animatedElements.forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetWidth; // Trigger reflow
+                el.style.animation = '';
+            });
+            
+            // Ensure modal content is visible
+            modalContent.style.opacity = '1';
+        });
+        
+        modal.addEventListener('hidden.bs.modal', function() {
+            const animatedElements = this.querySelectorAll('.animate__animated');
+            animatedElements.forEach(el => {
+                el.style.animation = 'none';
+                el.style.opacity = '0';
+            });
+        });
+    });
+    
+    // Add hover effect to submit button
+    const submitButtons = document.querySelectorAll('.modal-footer .btn-primary');
+    submitButtons.forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.classList.add('animate__pulse');
+        });
+        btn.addEventListener('mouseleave', function() {
+            this.classList.remove('animate__pulse');
+        });
+    });
+});
+
+</script>
+
+{% endblock %}

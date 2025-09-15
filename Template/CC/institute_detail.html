@@ -1,0 +1,1475 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        /* Purple Theme Color Variables */
+        --primary-purple: #8a2be2;
+        --dark-purple: #6a1b9a;
+        --light-purple: #ba68c8;
+        --lighter-purple: #e2c3ff;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(138, 43, 226, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(138, 43, 226, 0.2);
+        --apply-color: #27ae60;
+        --closed-color: #e74c3c;
+    }
+
+    /* Base Styles */
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+        color: var(--text-dark);
+        overflow-x: hidden;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Particle Background Canvas */
+    .particle-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+    }
+
+    /* Main Container */
+    .institute-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        background: var(--card-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.3s forwards;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Header with Dynamic Effects */
+    .institute-header {
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .header-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), 
+            rgba(255, 255, 255, 0.2) 0%, 
+            transparent 70%);
+        transition: all 0.3s ease-out;
+        pointer-events: none;
+    }
+
+    .institute-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        position: relative;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.5s forwards;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 700;
+        background: var(--apply-color);
+        color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        animation: pulse 2s infinite;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: 
+            fadeInUp 0.8s 0.7s forwards,
+            pulse 2s infinite 1s;
+    }
+
+    /* Content Sections */
+    .content-section {
+        padding: 2rem;
+    }
+
+    /* Enhanced Image Slider */
+    .slider-container {
+        position: relative;
+        margin: 3rem 0;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.7s forwards;
+        border: 1px solid var(--card-border);
+    }
+
+    .slider {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        height: 500px;
+    }
+
+    .slide {
+        min-width: 100%;
+        height: 100%;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .slider-nav {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 2;
+    }
+
+    .slider-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .slider-dot.active {
+        background: var(--white);
+        transform: scale(1.2);
+    }
+
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+        transition: all 0.3s ease;
+        border: none;
+        color: var(--primary-purple);
+        font-size: 1.5rem;
+    }
+
+    .slider-btn:hover {
+        background: var(--white);
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+    }
+
+    .slider-prev {
+        left: 20px;
+    }
+
+    .slider-next {
+        right: 20px;
+    }
+
+    /* Institute Details */
+    .details-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .detail-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform: translateY(20px);
+        opacity: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .detail-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.05), transparent);
+        transition: 0.6s;
+    }
+
+    .detail-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .detail-card:hover::before {
+        left: 100%;
+    }
+
+    .detail-card:nth-child(1) { animation: fadeInUp 0.8s 0.9s forwards; }
+    .detail-card:nth-child(2) { animation: fadeInUp 0.8s 1.1s forwards; }
+
+    .detail-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--primary-purple);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .detail-title i {
+        color: var(--light-purple);
+        transition: transform 0.3s ease;
+    }
+
+    .detail-card:hover .detail-title i {
+        transform: rotate(15deg) scale(1.2);
+    }
+
+    .detail-content {
+        line-height: 1.8;
+    }
+
+    .detail-item {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        border-left: 3px solid var(--light-purple);
+        transition: all 0.3s ease;
+    }
+
+    .detail-card:hover .detail-item {
+        border-left: 3px solid var(--primary-purple);
+        padding-left: 2rem;
+    }
+
+    /* Nearby Hostels Section */
+    .hostels-section {
+        background: linear-gradient(135deg, #f5f0ff 0%, #e9dcff 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 1.3s forwards;
+        transition: all 0.4s ease;
+    }
+
+    .hostels-section:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        border: none;
+        font-size: 1rem;
+    }
+
+    .update-btn {
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        color: white;
+    }
+
+    .update-btn:hover {
+        background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(106, 27, 154, 0.4);
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(192, 57, 43, 0.4);
+    }
+
+    /* Back Button */
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-top: 2rem;
+        box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(106, 27, 154, 0.4);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary-purple);
+        text-align: center;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-light);
+        transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+        color: var(--primary-purple);
+    }
+
+    .modal-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .modal-form input,
+    .modal-form textarea,
+    .modal-form select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .modal-form input:focus,
+    .modal-form textarea:focus,
+    .modal-form select:focus {
+        border-color: var(--primary-purple);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+    }
+
+    .modal-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .modal-btn {
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .modal-btn-cancel {
+        background: #f1f1f1;
+        color: var(--text-dark);
+    }
+
+    .modal-btn-cancel:hover {
+        background: #e1e1e1;
+    }
+
+    .modal-btn-confirm {
+        background: var(--primary-purple);
+        color: white;
+    }
+
+    .modal-btn-confirm:hover {
+        background: var(--dark-purple);
+    }
+
+    .modal-btn-delete {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .modal-btn-delete:hover {
+        background: #c0392b;
+    }
+
+    /* Confirmation Modal */
+    .confirmation-modal .modal-content {
+        text-align: center;
+    }
+
+    .confirmation-text {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .confirmation-icon {
+        font-size: 3rem;
+        color: #e74c3c;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .institute-title {
+            font-size: 2.5rem;
+        }
+        
+        .slider {
+            height: 400px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .institute-container {
+            margin: 1rem;
+            border-radius: 15px;
+        }
+        
+        .institute-title {
+            font-size: 2rem;
+        }
+        
+        .slider {
+            height: 300px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .slider {
+            height: 250px;
+        }
+        
+        .detail-card {
+            padding: 1.5rem;
+        }
+        
+        .slider-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+
+        .modal-content {
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+        }
+    }
+    .alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.alert-success {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27ae60;
+    border-left: 4px solid #27ae60;
+}
+
+.alert-error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+.animate__animated {
+        --animate-duration: 0.5s;
+    }
+    
+    .modal-content {
+        transform-origin: center;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .form-group {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+    
+    .modal-title {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.4s ease;
+    }
+    
+    .modal-actions {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+    
+    /* Animation classes when modal is shown */
+    #update-modal.active .modal-content {
+        animation: modalZoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    #update-modal.active .modal-title {
+        animation: fadeInDown 0.5s ease forwards 0.3s;
+    }
+    
+    #update-modal.active .form-group:nth-child(odd) {
+        animation: fadeInLeft 0.5s ease forwards;
+        animation-delay: calc(0.4s + (0.1s * var(--i)));
+    }
+    
+    #update-modal.active .form-group:nth-child(even) {
+        animation: fadeInRight 0.5s ease forwards;
+        animation-delay: calc(0.4s + (0.1s * var(--i)));
+    }
+    
+    #update-modal.active .modal-actions {
+        animation: fadeInUp 0.5s ease forwards 0.8s;
+    }
+    
+    /* Purple-themed focus effects */
+    .modal-form input:focus,
+    .modal-form textarea:focus,
+    .modal-form select:focus {
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    /* Keyframe animations */
+    @keyframes modalZoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    .form-columns {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .form-columns {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    }
+    
+    /* Existing animation styles remain the same */
+    .animate__animated {
+        --animate-duration: 0.5s;
+    }
+    
+    .modal-content {
+        transform-origin: center;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 800px; /* Slightly wider for 2 columns */
+    }
+    .confirmation-modal .modal-content {
+        max-width: 500px;
+        text-align: center;
+        padding: 2.5rem;
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: scale(0.8);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    #delete-modal.active .modal-content {
+        animation: modalZoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .confirmation-icon {
+        font-size: 3.5rem;
+        color: #e74c3c;
+        margin: 1rem 0;
+        transform: scale(0);
+    }
+    
+    #delete-modal.active .confirmation-icon {
+        animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.2s;
+    }
+    
+    .modal-title {
+        color: #e74c3c;
+        margin-bottom: 1rem;
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    
+    #delete-modal.active .modal-title {
+        animation: fadeInDown 0.5s ease forwards 0.4s;
+    }
+    
+    .confirmation-text {
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    
+    #delete-modal.active .confirmation-text {
+        animation: fadeIn 0.5s ease forwards 0.6s;
+    }
+    
+    .modal-actions {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    #delete-modal.active .modal-actions {
+        animation: fadeInUp 0.5s ease forwards 0.8s;
+    }
+    
+    .modal-btn-delete {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .modal-btn-delete:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+    }
+    
+    .modal-btn-delete:active {
+        transform: translateY(1px);
+    }
+    
+    /* Keyframe animations */
+    @keyframes modalZoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes bounceIn {
+        0% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+</style>
+
+<!-- Interactive Particle Canvas -->
+<canvas class="particle-background" id="particleCanvas"></canvas>
+
+<div class="institute-container">
+    <!-- Header with Dynamic Effects -->
+    <div class="institute-header">
+        <div class="header-overlay" id="header-overlay"></div>
+        <h1 class="institute-title">{{ institute.title }}</h1>
+        <p class="institute-category">{{ institute.category }}</p>
+        <span class="status-badge">{{ institute.status }}</span>
+    </div>
+    
+    <div class="content-section">
+        <!-- Action Buttons -->
+        {% if request.user.is_staff %}
+        <div class="action-buttons">
+            <button class="action-btn update-btn" id="update-btn">
+                <i class="fas fa-edit"></i> Update Institute
+            </button>
+            <button class="action-btn delete-btn" id="delete-btn">
+                <i class="fas fa-trash-alt"></i> Delete Institute
+            </button>
+        </div>
+        {% endif %}
+        
+        <!-- Enhanced Image Slider -->
+        <div class="slider-container">
+            <div class="slider" id="slider">
+                {% for image in institute.images.all %}
+                <div class="slide">
+                    <img src="{{ image.image.url }}" alt="{{ institute.title }} - Image {{ forloop.counter }}">
+                </div>
+                {% empty %}
+                <div class="slide">
+                    <img src="{% static 'Images/default.jpg' %}" alt="Default Institute Image">
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button class="slider-btn slider-prev" id="slider-prev">❮</button>
+            <button class="slider-btn slider-next" id="slider-next">❯</button>
+            
+            <div class="slider-nav" id="slider-nav">
+                {% for image in institute.images.all %}
+                <div class="slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Institute Details -->
+        <div class="details-container">
+            <div class="detail-card">
+                <h3 class="detail-title"><i class="fas fa-info-circle"></i> Institute Details</h3>
+                <div class="detail-content">
+                    <div class="detail-item">
+                        <strong>INFO:</strong> {{ institute.description }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Location:</strong> {{ institute.location }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Rank:</strong> {{ institute.rank }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Department:</strong> {{ institute.department }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Contact:</strong> {{ institute.contact }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nearby Hostels Section -->
+            <div class="detail-card hostels-section">
+                <h3 class="detail-title"><i class="fas fa-home"></i> Nearby Hostels</h3>
+                <div class="detail-content">
+                    <p>{{ institute.nearby_hostels }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Back Button -->
+        <div class="text-center">
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Previous Page
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Update Institute Modal -->
+<div class="modal-overlay" id="update-modal">
+    <div class="modal-content animate__animated animate__zoomIn">
+        <button class="modal-close" id="update-close">&times;</button>
+        <h3 class="modal-title animate__animated animate__fadeInDown">Update Institute</h3>
+        <form method="post" class="modal-form" id="update-form" action="{% url 'institute_detail' institute_id=institute.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update">
+            
+            <div class="form-columns">
+                <!-- Left Column -->
+                <div class="form-column">
+                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-1s">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" value="{{ institute.title }}" required>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-2s">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" value="{{ institute.location }}" required>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-3s">
+                        <label for="rank">Rank</label>
+                        <input type="text" id="rank" name="rank" value="{{ institute.rank }}" required>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-4s">
+                        <label for="contact">Contact</label>
+                        <textarea id="contact" name="contact" required>{{ institute.contact }}</textarea>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="form-column">
+                    <div class="form-group animate__animated animate__fadeInRight animate__delay-1s">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" required>{{ institute.description }}</textarea>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInRight animate__delay-2s">
+                        <label for="nearby_hostels">Nearby Hostels</label>
+                        <input type="text" id="nearby_hostels" name="nearby_hostels" value="{{ institute.nearby_hostels }}" required>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInRight animate__delay-3s">
+                        <label for="department">Department</label>
+                        <input type="text" id="department" name="department" value="{{ institute.department }}" required>
+                    </div>
+                    
+                    <div class="form-group animate__animated animate__fadeInRight animate__delay-4s">
+                        <label for="status">Status</label>
+                        <select id="status" name="status" required>
+                            {% for choice in institute.status_choices %}
+                            <option value="{{ choice.0 }}" {% if choice.0 == institute.status %}selected{% endif %}>{{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions animate__animated animate__fadeInUp animate__delay-5s">
+                <button type="button" class="modal-btn modal-btn-cancel" id="update-cancel">Cancel</button>
+                <button type="submit" class="modal-btn modal-btn-confirm">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay confirmation-modal" id="delete-modal">
+    <div class="modal-content animate__animated animate__zoomIn">
+        <button class="modal-close animate__animated animate__fadeIn" id="delete-close">&times;</button>
+        <div class="confirmation-icon animate__animated animate__bounceIn">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-title animate__animated animate__fadeInDown">Confirm Deletion</h3>
+        <p class="confirmation-text animate__animated animate__fadeIn">
+            Are you sure you want to delete "{{ institute.title }}"? This action cannot be undone.
+        </p>
+        <form method="post" id="delete-form" action="{% url 'institute_detail' institute_id=institute.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <div class="modal-actions animate__animated animate__fadeInUp">
+                <button type="button" class="modal-btn modal-btn-cancel animate__animated animate__pulse" id="delete-cancel">No, Cancel</button>
+                <button type="submit" class="modal-btn modal-btn-delete animate__animated animate__pulse" id="delete-confirm">Yes, Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Interactive Particle Background
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Mouse position tracking
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    document.addEventListener('mousemove', function(event) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        
+        // Update header overlay position
+        const overlay = document.getElementById('header-overlay');
+        if (overlay) {
+            overlay.style.setProperty('--mouse-x', `${event.clientX}px`);
+            overlay.style.setProperty('--mouse-y', `${event.clientY}px`);
+        }
+    });
+    
+    // Purple-themed particle colors
+    const purpleColors = [
+        'hsla(271, 76%, 53%, 0.7)',    // Primary purple
+        'hsla(271, 65%, 60%, 0.7)',    // Lighter purple
+        'hsla(271, 45%, 70%, 0.7)',    // Light purple
+        'hsla(271, 35%, 80%, 0.7)'      // Very light purple
+    ];
+    
+    // Particle constructor
+    function Particle() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 4 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.color = purpleColors[Math.floor(Math.random() * purpleColors.length)];
+        this.angle = 0;
+        this.velocity = Math.random() * 0.02;
+        this.radius = Math.random() * 50 + 50;
+        this.distanceToMouse = 0;
+        this.affectedByMouse = false;
+    }
+    
+    // Update particle position
+    Particle.prototype.update = function() {
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+        
+        if (this.distanceToMouse < 150) {
+            this.affectedByMouse = true;
+            const forceDirectionX = dx / this.distanceToMouse;
+            const forceDirectionY = dy / this.distanceToMouse;
+            const force = (150 - this.distanceToMouse) / 150 * 2;
+            
+            this.x -= forceDirectionX * force;
+            this.y -= forceDirectionY * force;
+        } else {
+            this.affectedByMouse = false;
+            this.angle += this.velocity;
+            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
+            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
+        }
+        
+        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+    };
+    
+    // Draw particle
+    Particle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        
+        if (this.affectedByMouse) {
+            ctx.fillStyle = 'hsla(271, 76%, 60%, 0.9)';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(138, 43, 226, 0.7)';
+        } else {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(138, 43, 226, 0.5)';
+        }
+        
+        ctx.fill();
+    };
+    
+    // Create particles
+    let particles = [];
+    const particleCount = window.innerWidth < 768 ? 80 : 150;
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw connecting lines
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+                const dx = particles[a].x - particles[b].x;
+                const dy = particles[a].y - particles[b].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `hsla(271, 76%, 53%, ${1 - distance/150})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                }
+            }
+            particles[a].update();
+            particles[a].draw();
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Image Slider Functionality
+    const slider = document.getElementById('slider');
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.slider-dot');
+    const prevBtn = document.getElementById('slider-prev');
+    const nextBtn = document.getElementById('slider-next');
+    let currentIndex = 0;
+    let autoSlideInterval;
+
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+        updateDots();
+    }
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateSlider();
+    }
+
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+    }
+
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => {
+            nextSlide();
+        }, 5000);
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+
+    // Event Listeners
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            goToSlide(parseInt(dot.dataset.index));
+        });
+    });
+
+    // Touch support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoSlide();
+    }, { passive: true });
+
+    slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startAutoSlide();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const threshold = 50;
+        if (touchStartX - touchEndX > threshold) {
+            nextSlide();
+        } else if (touchEndX - touchStartX > threshold) {
+            prevSlide();
+        }
+    }
+
+    // Pause auto-slide on hover
+    slider.addEventListener('mouseenter', stopAutoSlide);
+    slider.addEventListener('mouseleave', startAutoSlide);
+
+    // Start auto-slide
+    startAutoSlide();
+
+    // Card tilt effect
+    const containers = document.querySelectorAll('.results-container, .no-results');
+    $(document).on('mousemove', function(e) {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        containers.forEach(container => {
+            $(container).css({
+                'transform': `perspective(1000px) rotateX(${(y - 0.5) * -2}deg) rotateY(${(x - 0.5) * 2}deg) translateY(0)`
+            });
+        });
+    });
+    
+    containers.forEach(container => {
+        container.addEventListener('mouseleave', () => {
+            container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+        });
+    });
+
+    // Modal functionality
+    const updateBtn = document.getElementById('update-btn');
+    const deleteBtn = document.getElementById('delete-btn');
+    const updateModal = document.getElementById('update-modal');
+    const deleteModal = document.getElementById('delete-modal');
+    const updateClose = document.getElementById('update-close');
+    const deleteClose = document.getElementById('delete-close');
+    const updateCancel = document.getElementById('update-cancel');
+    const deleteCancel = document.getElementById('delete-cancel');
+
+    if (updateBtn) {
+        updateBtn.addEventListener('click', () => {
+            updateModal.classList.add('active');
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('active');
+        });
+    }
+
+    updateClose.addEventListener('click', () => {
+        updateModal.classList.remove('active');
+    });
+
+    deleteClose.addEventListener('click', () => {
+        deleteModal.classList.remove('active');
+    });
+
+    updateCancel.addEventListener('click', () => {
+        updateModal.classList.remove('active');
+    });
+
+    deleteCancel.addEventListener('click', () => {
+        deleteModal.classList.remove('active');
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === updateModal) {
+            updateModal.classList.remove('active');
+        }
+        if (e.target === deleteModal) {
+            deleteModal.classList.remove('active');
+        }
+    });
+
+    // Form submission handling
+    const updateForm = document.getElementById('update-form');
+    const deleteForm = document.getElementById('delete-form');
+
+    if (updateForm) {
+        updateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // You can add AJAX submission here or let it submit normally
+            this.submit();
+        });
+    }
+
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // You can add AJAX submission here or let it submit normally
+            this.submit();
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // When opening modal
+    document.getElementById('update-btn')?.addEventListener('click', function() {
+        const modal = document.getElementById('update-modal');
+        modal.classList.add('active');
+        
+        // Set custom properties for staggered animations
+        const formGroups = modal.querySelectorAll('.form-group');
+        formGroups.forEach((group, i) => {
+            group.style.setProperty('--i', i);
+        });
+    });
+    
+    // When closing modal
+    document.getElementById('update-close')?.addEventListener('click', function() {
+        document.getElementById('update-modal').classList.remove('active');
+    });
+    
+    document.getElementById('update-cancel')?.addEventListener('click', function() {
+        document.getElementById('update-modal').classList.remove('active');
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // When opening modal
+    document.getElementById('update-btn')?.addEventListener('click', function() {
+        const modal = document.getElementById('update-modal');
+        modal.classList.add('active');
+        
+        // Set custom properties for staggered animations
+        const formGroups = modal.querySelectorAll('.form-group');
+        formGroups.forEach((group, i) => {
+            group.style.setProperty('--i', i);
+        });
+    });
+    
+    // When closing modal
+    document.getElementById('update-close')?.addEventListener('click', function() {
+        document.getElementById('update-modal').classList.remove('active');
+    });
+    
+    document.getElementById('update-cancel')?.addEventListener('click', function() {
+        document.getElementById('update-modal').classList.remove('active');
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete modal animation triggers
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteBtn = document.getElementById('delete-btn');
+    const deleteClose = document.getElementById('delete-close');
+    const deleteCancel = document.getElementById('delete-cancel');
+    
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            deleteModal.classList.add('active');
+        });
+    }
+    
+    [deleteClose, deleteCancel].forEach(btn => {
+        btn?.addEventListener('click', function() {
+            deleteModal.classList.remove('active');
+        });
+    });
+    
+    // Add pulse animation on hover
+    const deleteConfirm = document.getElementById('delete-confirm');
+    if (deleteConfirm) {
+        deleteConfirm.addEventListener('mouseenter', function() {
+            this.classList.add('animate__pulse');
+        });
+        
+        deleteConfirm.addEventListener('mouseleave', function() {
+            this.classList.remove('animate__pulse');
+        });
+    }
+});
+</script>
+{% endblock %}

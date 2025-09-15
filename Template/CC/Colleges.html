@@ -1,0 +1,616 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    :root {
+        --primary-green: #2E8B57; /* Sea Green */
+        --secondary-green: #3CB371; /* Medium Sea Green */
+        --light-green: #98FB98; /* Pale Green */
+        --dark-green: #228B22; /* Forest Green */
+        --white: #FFFFFF;
+        --soft-white: rgba(255, 255, 255, 0.9);
+        --card-bg: rgba(255, 255, 255, 0.96);
+        --card-border: rgba(46, 139, 87, 0.1);
+        --text-dark: #333333;
+        --text-medium: #555555;
+        --text-light: #777777;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(46, 139, 87, 0.2);
+    }
+    
+    /* Particle Background Canvas */
+    .particle-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #F5FFF5 0%, #E5FFE5 100%);
+    }
+    
+    /* Page header animation */
+    .university-header {
+        color: var(--dark-green);
+        text-align: center;
+        margin: 3rem 0;
+        font-family: 'Montserrat', sans-serif;
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 800;
+        letter-spacing: 1px;
+        position: relative;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s forwards 0.3s;
+    }
+    
+    .university-header span {
+        display: inline-block;
+        position: relative;
+    }
+    
+    .university-header span::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.8s ease;
+        animation: underlineGrow 1.5s forwards 1s;
+    }
+    
+    .university-header::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+        border-radius: 2px;
+        animation: linePulse 3s infinite;
+    }
+    
+    /* Grid container */
+    .universities-container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
+        opacity: 0;
+        animation: fadeIn 0.8s forwards 0.5s;
+    }
+    
+    /* Enhanced Professional Card Design */
+    .university-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        overflow: visible; /* Changed from hidden to visible to fix badge cut-off */
+        height: 100%;
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: var(--shadow-light);
+        position: relative;
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+        animation: cardEntry 0.8s forwards;
+        animation-delay: calc(0.1s * var(--i));
+        border: 1px solid var(--card-border);
+        z-index: 1;
+    }
+    
+    .university-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .university-card:hover {
+        transform: translateY(-8px) scale(1.02) !important;
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .university-card:hover::before {
+        opacity: 1;
+    }
+    
+    /* Enhanced Image Container */
+    .card-img-container {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+    
+    .card-img-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        z-index: 1;
+        transition: height 0.4s ease;
+    }
+    
+    .university-card:hover .card-img-container::after {
+        height: 60%;
+    }
+    
+    .card-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 1s cubic-bezier(0.2, 0.96, 0.34, 1);
+        filter: brightness(0.95) saturate(0.9);
+    }
+    
+    .university-card:hover .card-img-container img {
+        transform: scale(1.08);
+        filter: brightness(1) saturate(1.1);
+    }
+    
+    /* Professional Card Body */
+    .card-body {
+        padding: 1.8rem;
+        position: relative;
+    }
+    
+    .status-badge-container {
+        position: absolute;
+        top: -12px; /* Adjusted to ensure full visibility */
+        right: 20px;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+    
+    .university-card:hover .status-badge-container {
+        transform: translateY(-5px);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .status-apply {
+        background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+        color: white;
+    }
+    
+    .status-closed {
+        background: linear-gradient(135deg, #ff4757 0%, #e84118 100%);
+        color: white;
+    }
+    
+    .institute-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .institute-name::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+        transition: width 0.4s ease;
+    }
+    
+    .university-card:hover .institute-name::after {
+        width: 60px;
+    }
+    
+    .institute-description {
+        font-size: 0.95rem;
+        color: var(--text-medium);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .university-card:hover .institute-description {
+        color: var(--text-dark);
+    }
+    
+    .meta-container {
+        border-top: 1px solid rgba(0,0,0,0.08);
+        padding-top: 1rem;
+        margin-top: auto;
+    }
+    
+    .institute-meta {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--text-medium);
+        margin-bottom: 0.6rem;
+    }
+    
+    .institute-meta i {
+        margin-right: 0.7rem;
+        color: var(--primary-green);
+        font-size: 1rem;
+        min-width: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .university-card:hover .institute-meta i {
+        transform: scale(1.1);
+        color: var(--secondary-green);
+    }
+    
+    /* Floating action button */
+    .card-action-btn {
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3);
+        z-index: 2;
+    }
+    
+    .university-card:hover .card-action-btn {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .card-action-btn:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 6px 20px rgba(46, 139, 87, 0.4);
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes cardEntry {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    @keyframes underlineGrow {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+    }
+    
+    @keyframes linePulse {
+        0% { width: 100px; opacity: 1; }
+        50% { width: 150px; opacity: 0.8; }
+        100% { width: 100px; opacity: 1; }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .card-img-container {
+            height: 200px;
+        }
+        
+        .universities-container {
+            padding: 0 1.5rem 3rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .card-img-container {
+            height: 180px;
+        }
+        
+        .university-header {
+            font-size: 2.2rem;
+            margin: 1.5rem 0 2.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .universities-container {
+            padding: 0 1rem 2rem;
+        }
+        
+        .card-img-container {
+            height: 160px;
+        }
+        
+        .status-badge-container {
+            top: -10px;
+            right: 15px;
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
+<!-- Particle Background Canvas -->
+<canvas class="particle-background" id="particleCanvas"></canvas>
+
+<div class="universities-container">
+    <h1 class="university-header">
+        <span>Colleges</span>
+    </h1>
+    <!-- Add University Button -->
+    <div class="text-center mb-5">
+        <a href="{% url 'upload_institute' %}" class="btn btn-outline-success">Add Colleges</a>
+    </div>
+    
+    <div class="row g-4">
+        {% for institute in InstituteName %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="{% url 'institute_detail' institute.id %}" class="text-decoration-none">
+                <div class="university-card" style="--i: {{ forloop.counter }};">
+                    <!-- Status Badge -->
+                    <div class="status-badge-container">
+                        <span class="status-badge {% if institute.status == 'Apply' %}status-apply{% else %}status-closed{% endif %}">
+                            {{ institute.status }}
+                        </span>
+                    </div>
+                    
+                    <!-- Image -->
+                    <div class="card-img-container">
+                        {% with institute.images.first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ institute.title }}" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'Images/default.jpg' %}" alt="No Image Available" loading="lazy">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="institute-name">{{ institute.title }}</h3>
+                        
+                        <p class="institute-description">
+                            {{ institute.description|truncatewords:25 }}
+                        </p>
+                        
+                        <div class="meta-container mt-auto">
+                            <div class="institute-meta">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ institute.location }}</span>
+                            </div>
+                            
+                            <div class="institute-meta">
+                                <i class="fas fa-trophy"></i>
+                                <span>Rank: {{ institute.rank }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating action button -->
+                        <a href="{% url 'institute_detail' institute.id %}" class="card-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Particle Background Animation
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Mouse position tracking
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        
+        document.addEventListener('mousemove', function(event) {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
+        
+        // Particle constructor
+        function Particle() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 4 + 1;
+            this.speedX = Math.random() * 1 - 0.5;
+            this.speedY = Math.random() * 1 - 0.5;
+            this.color = `hsla(${Math.floor(Math.random() * 60 + 100)}, 100%, 60%, ${Math.random() * 0.5 + 0.2})`;
+            this.angle = 0;
+            this.velocity = Math.random() * 0.02;
+            this.radius = Math.random() * 50 + 50;
+            this.distanceToMouse = 0;
+            this.affectedByMouse = false;
+        }
+        
+        // Update particle position
+        Particle.prototype.update = function() {
+            // Calculate distance to mouse
+            const dx = mouseX - this.x;
+            const dy = mouseY - this.y;
+            this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+            
+            // If particle is close to mouse, make it interactive
+            if (this.distanceToMouse < 150) {
+                this.affectedByMouse = true;
+                const forceDirectionX = dx / this.distanceToMouse;
+                const forceDirectionY = dy / this.distanceToMouse;
+                const force = (150 - this.distanceToMouse) / 150 * 2;
+                
+                this.x -= forceDirectionX * force;
+                this.y -= forceDirectionY * force;
+            } else {
+                this.affectedByMouse = false;
+                // Normal particle movement
+                this.angle += this.velocity;
+                this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
+                this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
+            }
+            
+            // Boundary check
+            if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+            if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+        };
+        
+        // Draw particle
+        Particle.prototype.draw = function() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            
+            // Make particles near mouse brighter and larger
+            if (this.affectedByMouse) {
+                ctx.fillStyle = `hsla(${Math.floor(Math.random() * 60 + 100)}, 100%, 65%, 0.8)`;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+            } else {
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+            }
+            
+            ctx.fill();
+        };
+        
+        // Create particles
+        let particles = [];
+        const particleCount = window.innerWidth < 768 ? 80 : 150;
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw connecting lines
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    const dx = particles[a].x - particles[b].x;
+                    const dy = particles[a].y - particles[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `hsla(120, 100%, 70%, ${1 - distance/150})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+                particles[a].update();
+                particles[a].draw();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Enhanced Card Interactions
+        const cards = document.querySelectorAll('.university-card');
+        
+        cards.forEach(card => {
+            const imgContainer = card.querySelector('.card-img-container');
+            
+            // Parallax effect on mouse move
+            card.addEventListener('mousemove', (e) => {
+                const x = e.clientX - card.getBoundingClientRect().left;
+                const y = e.clientY - card.getBoundingClientRect().top;
+                const centerX = card.offsetWidth / 2;
+                const centerY = card.offsetHeight / 2;
+                
+                const moveX = (x - centerX) / 20;
+                const moveY = (y - centerY) / 20;
+                
+                imgContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                
+                // 3D tilt effect
+                const angleX = (y - centerY) / 15;
+                const angleY = (centerX - x) / 15;
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-8px) scale(1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                imgContainer.style.transform = 'translate(0, 0)';
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    :root {
+        /* Red Theme Color Variables */
+        --primary-red: #e74c3c;
+        --dark-red: #c0392b;
+        --light-red: #ff6b6b;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(231, 76, 60, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(231, 76, 60, 0.2);
+    }
+
+    /* Particle Background Canvas */
+    .particle-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffebeb 100%);
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--shadow-light);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .profile-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        position: relative;
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+        padding: 2rem 0;
+        text-align: center;
+    }
+
+    .profile-pic-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .profile-pic-container:hover .profile-image {
+        transform: scale(1.05);
+    }
+
+    .camera-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .camera-btn:hover {
+        background: var(--light-red);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Form Styles */
+    .form-section {
+        padding: 2rem;
+    }
+
+    .section-title {
+        color: var(--primary-red);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--card-border);
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title i {
+        margin-right: 10px;
+    }
+
+    .form-floating label {
+        color: var(--text-light);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 0.25rem rgba(231, 76, 60, 0.25);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        background: var(--primary-red);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background: var(--dark-red);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadein {
+        animation: fadeIn 0.8s ease forwards;
+    }
+
+    .animate-fadeinup {
+        animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .delay-1 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+        animation-delay: 0.4s;
+    }
+</style>
+
+<!-- Particle Background Canvas -->
+<canvas class="particle-background" id="particleCanvas"></canvas>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-card animate-fadein">
+                <!-- Profile Header -->
+                <div class="profile-header text-white">
+                    <div class="profile-pic-container">
+                        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}?{% now 'U' %}{% else %}{% static 'default_profile.png' %}{% endif %}" 
+                             class="profile-image"
+                             alt="Profile picture"
+                             id="profileImage">
+                        <label for="profile_pic_upload" class="camera-btn">
+                            <i class="bi bi-camera-fill text-danger"></i>
+                        </label>
+                    </div>
+                    <h3 class="mt-3 mb-0">{{ request.user.get_full_name|default:request.user.username }}</h3>
+                    <p class="text-white-80 mb-0">{{ request.user.email }}</p>
+                </div>
+
+                <!-- Profile Form -->
+                <div class="form-section">
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show animate-fadein" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" id="profileForm">
+                        {% csrf_token %}
+                        <input type="file" name="profile_pic" accept="image/*" id="profile_pic_upload" class="d-none">
+                        
+                        <!-- Personal Information -->
+                        <div class="mb-4 animate-fadeinup">
+                            <h5 class="section-title"><i class="bi bi-person-vcard"></i> Personal Information</h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" placeholder="About You" id="id_bio" name="bio" style="height: 100px">{{ form.bio.value|default_if_none:'' }}</textarea>
+                                        <label for="id_bio">About You</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="id_birth_date" name="birth_date" value="{{ form.birth_date.value|date:'Y-m-d'|default_if_none:'' }}">
+                                        <label for="id_birth_date">Birth Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="id_gender" name="gender">
+                                            <option value="">Select Gender</option>
+                                            <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Male</option>
+                                            <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Female</option>
+                                            <option value="O" {% if form.gender.value == 'O' %}selected{% endif %}>Other</option>
+                                        </select>
+                                        <label for="id_gender">Gender</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="mb-4 animate-fadeinup delay-1">
+                            <h5 class="section-title"><i class="bi bi-telephone"></i> Contact Information</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default_if_none:'' }}">
+                                        <label for="id_phone_number">Phone Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_address" name="address" value="{{ form.address.value|default_if_none:'' }}">
+                                        <label for="id_address">Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_city" name="city" value="{{ form.city.value|default_if_none:'' }}">
+                                        <label for="id_city">City</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_country" name="country" value="{{ form.country.value|default_if_none:'' }}">
+                                        <label for="id_country">Country</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div class="mb-4 animate-fadeinup delay-2">
+                            <h5 class="section-title"><i class="bi bi-globe"></i> Social Links</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="url" class="form-control" id="id_website" name="website" value="{{ form.website.value|default_if_none:'' }}">
+                                        <label for="id_website">Website</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_twitter" name="twitter" value="{{ form.twitter.value|default_if_none:'' }}">
+                                        <label for="id_twitter">Twitter</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_facebook" name="facebook" value="{{ form.facebook.value|default_if_none:'' }}">
+                                        <label for="id_facebook">Facebook</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="id_instagram" name="instagram" value="{{ form.instagram.value|default_if_none:'' }}">
+                                        <label for="id_instagram">Instagram</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn submit-btn text-white rounded-pill">
+                                <i class="bi bi-save me-2"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Interactive Particle Background
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Mouse position tracking
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        
+        document.addEventListener('mousemove', function(event) {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
+        
+        // Red-themed particle colors
+        const redColors = [
+            'hsla(0, 70%, 60%, 0.7)',    // Bright red
+            'hsla(0, 80%, 50%, 0.7)',    // Primary red
+            'hsla(0, 60%, 70%, 0.7)',    // Light red
+            'hsla(0, 50%, 80%, 0.7)'     // Very light red
+        ];
+        
+        // Particle constructor
+        function Particle() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 4 + 1;
+            this.speedX = Math.random() * 1 - 0.5;
+            this.speedY = Math.random() * 1 - 0.5;
+            this.color = redColors[Math.floor(Math.random() * redColors.length)];
+            this.angle = 0;
+            this.velocity = Math.random() * 0.02;
+            this.radius = Math.random() * 50 + 50;
+            this.distanceToMouse = 0;
+            this.affectedByMouse = false;
+        }
+        
+        // Update particle position
+        Particle.prototype.update = function() {
+            const dx = mouseX - this.x;
+            const dy = mouseY - this.y;
+            this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+            
+            if (this.distanceToMouse < 150) {
+                this.affectedByMouse = true;
+                const forceDirectionX = dx / this.distanceToMouse;
+                const forceDirectionY = dy / this.distanceToMouse;
+                const force = (150 - this.distanceToMouse) / 150 * 2;
+                
+                this.x -= forceDirectionX * force;
+                this.y -= forceDirectionY * force;
+            } else {
+                this.affectedByMouse = false;
+                this.angle += this.velocity;
+                this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
+                this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
+            }
+            
+            if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+            if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+        };
+        
+        // Draw particle
+        Particle.prototype.draw = function() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            
+            if (this.affectedByMouse) {
+                ctx.fillStyle = 'hsla(0, 80%, 60%, 0.9)';
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = 'rgba(231, 76, 60, 0.7)';
+            } else {
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(231, 76, 60, 0.5)';
+            }
+            
+            ctx.fill();
+        };
+        
+        // Create particles
+        let particles = [];
+        const particleCount = window.innerWidth < 768 ? 80 : 150;
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw connecting lines
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    const dx = particles[a].x - particles[b].x;
+                    const dy = particles[a].y - particles[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `hsla(0, 70%, 60%, ${1 - distance/150})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+                particles[a].update();
+                particles[a].draw();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Profile picture upload
+        const profilePicInput = document.getElementById('profile_pic_upload');
+        const profileImage = document.getElementById('profileImage');
+    
+        profilePicInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+</script>
+{% endblock %}
