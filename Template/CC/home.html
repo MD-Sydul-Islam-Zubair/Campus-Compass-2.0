@@ -22,14 +22,14 @@
     }
     
     /* Particle Background Canvas */
-    .particle-background {
+    #particles-js {
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         z-index: -1;
-        background: linear-gradient(135deg, #F5F9FF 0%, #E5EFFF 100%);
+        background-color: white;
     }
     
     /* Section Styles */
@@ -483,7 +483,7 @@
 </style>
 
 <!-- Particle Background Canvas -->
-<canvas class="particle-background" id="particleCanvas"></canvas>
+<div id="particles-js"></div>
 
 <!-- Content Wrapper -->
 <div class="container">
@@ -598,128 +598,143 @@
     <i class="fas fa-question"></i>
 </div>
 
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Particle Background Animation
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        // Mouse position tracking
-        let mouseX = canvas.width / 2;
-        let mouseY = canvas.height / 2;
-        
-        document.addEventListener('mousemove', function(event) {
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-        });
-        
-        // Particle constructor
-        function Particle() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 4 + 1;
-            this.speedX = Math.random() * 1 - 0.5;
-            this.speedY = Math.random() * 1 - 0.5;
-            this.color = `hsla(${Math.floor(Math.random() * 60 + 200)}, 100%, 60%, ${Math.random() * 0.5 + 0.2})`;
-            this.angle = 0;
-            this.velocity = Math.random() * 0.02;
-            this.radius = Math.random() * 50 + 50;
-            this.distanceToMouse = 0;
-            this.affectedByMouse = false;
-        }
-        
-        // Update particle position
-        Particle.prototype.update = function() {
-            // Calculate distance to mouse
-            const dx = mouseX - this.x;
-            const dy = mouseY - this.y;
-            this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
-            
-            // If particle is close to mouse, make it interactive
-            if (this.distanceToMouse < 150) {
-                this.affectedByMouse = true;
-                const forceDirectionX = dx / this.distanceToMouse;
-                const forceDirectionY = dy / this.distanceToMouse;
-                const force = (150 - this.distanceToMouse) / 150 * 2;
-                
-                this.x -= forceDirectionX * force;
-                this.y -= forceDirectionY * force;
-            } else {
-                this.affectedByMouse = false;
-                // Normal particle movement
-                this.angle += this.velocity;
-                this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
-                this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
-            }
-            
-            // Boundary check
-            if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-            if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-        };
-        
-        // Draw particle
-        Particle.prototype.draw = function() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            
-            // Make particles near mouse brighter and larger
-            if (this.affectedByMouse) {
-                ctx.fillStyle = `hsla(${Math.floor(Math.random() * 60 + 200)}, 100%, 65%, 0.8)`;
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = this.color;
-            } else {
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
-            }
-            
-            ctx.fill();
-        };
-        
-        // Create particles
-        let particles = [];
-        const particleCount = window.innerWidth < 768 ? 80 : 150;
-        
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw connecting lines
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    const dx = particles[a].x - particles[b].x;
-                    const dy = particles[a].y - particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 150) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `hsla(220, 100%, 70%, ${1 - distance/150})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#3498db" // Blue color
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 2,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#3498db",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
                     }
                 }
-                particles[a].update();
-                particles[a].draw();
+            },
+            "interactivity": {
+                "detect_on": "window",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 150,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+        
+        // Add custom mouse interaction for stronger particle attraction
+        document.addEventListener('mousemove', function(e) {
+            if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
+                // Get the mouse position
+                var mouseX = e.clientX;
+                var mouseY = e.clientY;
+                
+                // Get all particles
+                var particles = particlesJS.particles.array;
+                
+                // Attract particles to mouse position
+                for (var i = 0; i < particles.length; i++) {
+                    var particle = particles[i];
+                    var dx = mouseX - particle.x;
+                    var dy = mouseY - particle.y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Only affect particles within a certain distance
+                    if (distance < 200) {
+                        var forceDirectionX = dx / distance;
+                        var forceDirectionY = dy / distance;
+                        var force = (200 - distance) / 200 * 3; // Stronger when closer
+                        
+                        // Apply force to particle velocity
+                        particle.vx = forceDirectionX * force;
+                        particle.vy = forceDirectionY * force;
+                    }
+                }
             }
-            
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
         
         // Enhanced touch scrolling with momentum for institution lists

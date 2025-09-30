@@ -8,40 +8,39 @@
 
 <style>
     :root {
-        /* Purple Theme Color Variables */
-        --primary-purple: #8a2be2;
-        --dark-purple: #6a1b9a;
-        --light-purple: #ba68c8;
+        /* Blue Theme Color Variables */
+        --primary-blue: #2c3e50;
+        --secondary-blue: #3498db;
+        --light-blue: #98c1ff;
         --card-bg: rgba(255, 255, 255, 0.95);
-        --card-border: rgba(138, 43, 226, 0.2);
+        --card-border: rgba(44, 62, 80, 0.2);
         --text-dark: #2c3e50;
         --text-light: #7f8c8d;
         --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
-        --shadow-hover: 0 12px 30px rgba(138, 43, 226, 0.2);
+        --shadow-hover: 0 12px 30px rgba(44, 62, 80, 0.2);
     }
 
     body {
         font-family: 'Montserrat', sans-serif;
-        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
         position: relative;
         min-height: 100vh;
         overflow-x: hidden;
     }
 
     /* Particle Background Canvas */
-    .particle-background {
+    #particles-js {
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         z-index: -1;
-        background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+        background-color: white;
     }
 
     /* Search Header */
     .search-header {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         padding: 2rem;
         border-radius: 10px;
@@ -61,8 +60,8 @@
         width: 200%;
         height: 200%;
         background: radial-gradient(circle, 
-            rgba(138, 43, 226, 0.1) 0%, 
-            rgba(106, 27, 154, 0.05) 50%, 
+            rgba(44, 62, 80, 0.1) 0%, 
+            rgba(52, 152, 219, 0.05) 50%, 
             transparent 70%);
         animation: glowPulse 8s linear infinite;
         z-index: -1;
@@ -95,7 +94,7 @@
 
     /* Section Headers */
     .section-header {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         padding: 1rem 1.5rem;
         font-size: 1.25rem;
@@ -122,7 +121,7 @@
 
     .result-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(138, 43, 226, 0.15);
+        box-shadow: 0 12px 25px rgba(44, 62, 80, 0.15);
     }
 
     .result-card img {
@@ -153,7 +152,7 @@
 
     /* Buttons */
     .btn-view {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         border: none;
         padding: 0.5rem 1.5rem;
@@ -166,7 +165,7 @@
 
     .btn-view:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
         color: white;
     }
 
@@ -204,9 +203,9 @@
 
     .no-results i {
         font-size: 3rem;
-        color: var(--primary-purple);
+        color: var(--primary-blue);
         margin-bottom: 1rem;
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -236,8 +235,8 @@
     }
 </style>
 
-<!-- Particle Background Canvas -->
-<canvas class="particle-background" id="particleCanvas"></canvas>
+<!-- Particle Background -->
+<div id="particles-js"></div>
 
 <div class="container mt-4">
     <div class="search-header animate__animated animate__fadeIn">
@@ -325,134 +324,145 @@
     {% endif %}
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Interactive Particle Background
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    // Mouse position tracking
-    let mouseX = canvas.width / 2;
-    let mouseY = canvas.height / 2;
-    
-    document.addEventListener('mousemove', function(event) {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    });
-    
-    // Purple-themed particle colors
-    const purpleColors = [
-        'hsla(271, 76%, 53%, 0.7)',    // Primary purple
-        'hsla(271, 65%, 60%, 0.7)',    // Lighter purple
-        'hsla(271, 45%, 70%, 0.7)',    // Light purple
-        'hsla(271, 35%, 80%, 0.7)'      // Very light purple
-    ];
-    
-    // Particle constructor
-    function Particle() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 4 + 1;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
-        this.color = purpleColors[Math.floor(Math.random() * purpleColors.length)];
-        this.angle = 0;
-        this.velocity = Math.random() * 0.02;
-        this.radius = Math.random() * 50 + 50;
-        this.distanceToMouse = 0;
-        this.affectedByMouse = false;
-    }
-    
-    // Update particle position
-    Particle.prototype.update = function() {
-        const dx = mouseX - this.x;
-        const dy = mouseY - this.y;
-        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
-        
-        if (this.distanceToMouse < 150) {
-            this.affectedByMouse = true;
-            const forceDirectionX = dx / this.distanceToMouse;
-            const forceDirectionY = dy / this.distanceToMouse;
-            const force = (150 - this.distanceToMouse) / 150 * 2;
-            
-            this.x -= forceDirectionX * force;
-            this.y -= forceDirectionY * force;
-        } else {
-            this.affectedByMouse = false;
-            this.angle += this.velocity;
-            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
-            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
-        }
-        
-        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-    };
-    
-    // Draw particle
-    Particle.prototype.draw = function() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        
-        if (this.affectedByMouse) {
-            ctx.fillStyle = 'hsla(271, 76%, 60%, 0.9)';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = 'rgba(138, 43, 226, 0.7)';
-        } else {
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(138, 43, 226, 0.5)';
-        }
-        
-        ctx.fill();
-    };
-    
-    // Create particles
-    let particles = [];
-    const particleCount = window.innerWidth < 768 ? 80 : 150;
-    
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-    
-    // Animation loop
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw connecting lines
-        for (let a = 0; a < particles.length; a++) {
-            for (let b = a; b < particles.length; b++) {
-                const dx = particles[a].x - particles[b].x;
-                const dy = particles[a].y - particles[b].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `hsla(271, 76%, 53%, ${1 - distance/150})`;
-                    ctx.lineWidth = 0.8;
-                    ctx.moveTo(particles[a].x, particles[a].y);
-                    ctx.lineTo(particles[b].x, particles[b].y);
-                    ctx.stroke();
+    // Initialize particles.js with blue theme
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#3498db" // Blue color
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 2,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#3498db",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": true,
+                    "rotateX": 600,
+                    "rotateY": 1200
                 }
             }
-            particles[a].update();
-            particles[a].draw();
-        }
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        },
+        "interactivity": {
+            "detect_on": "window",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
     });
-
+    
+    // Add custom mouse interaction for stronger particle attraction
+    document.addEventListener('mousemove', function(e) {
+        if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
+            // Get the mouse position
+            var mouseX = e.clientX;
+            var mouseY = e.clientY;
+            
+            // Get all particles
+            var particles = particlesJS.particles.array;
+            
+            // Attract particles to mouse position
+            for (var i = 0; i < particles.length; i++) {
+                var particle = particles[i];
+                var dx = mouseX - particle.x;
+                var dy = mouseY - particle.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Only affect particles within a certain distance
+                if (distance < 200) {
+                    var forceDirectionX = dx / distance;
+                    var forceDirectionY = dy / distance;
+                    var force = (200 - distance) / 200 * 3; // Stronger when closer
+                    
+                    // Apply force to particle velocity
+                    particle.vx = forceDirectionX * force;
+                    particle.vy = forceDirectionY * force;
+                }
+            }
+        }
+    });
+    
     // Add animation to cards
     const cards = document.querySelectorAll('.animate-card');
     cards.forEach((card, index) => {
@@ -464,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resultCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-5px)';
-            card.style.boxShadow = '0 12px 25px rgba(138, 43, 226, 0.15)';
+            card.style.boxShadow = '0 12px 25px rgba(44, 62, 80, 0.15)';
         });
         card.addEventListener('mouseleave', () => {
             card.style.transform = '';

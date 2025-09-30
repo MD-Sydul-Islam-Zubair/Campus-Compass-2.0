@@ -4,35 +4,35 @@
 
 <style>
     :root {
-        --primary-orange: #FF6B35;
-        --secondary-orange: #FF9E1B;
-        --light-orange: #FFD6A5;
-        --dark-orange: #E64A19;
+        --primary-blue: #2c3e50; /* Dark Blue */
+        --secondary-blue: #3498db; /* Medium Blue */
+        --light-blue: #98c1ff; /* Light Blue */
+        --dark-blue: #2980b9; /* Darker Blue */
         --white: #FFFFFF;
         --soft-white: rgba(255, 255, 255, 0.9);
         --card-bg: rgba(255, 255, 255, 0.96);
-        --card-border: rgba(255, 107, 53, 0.1);
-        --text-dark: #333333;
+        --card-border: rgba(44, 62, 80, 0.1);
+        --text-dark: #2c3e50;
         --text-medium: #555555;
-        --text-light: #777777;
+        --text-light: #7f8c8d;
         --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
-        --shadow-hover: 0 12px 30px rgba(255, 107, 53, 0.2);
+        --shadow-hover: 0 12px 30px rgba(44, 62, 80, 0.2);
     }
     
     /* Particle Background Canvas */
-    .particle-background {
+    #particles-js {
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         z-index: -1;
-        background: linear-gradient(135deg, #FFF8F5 0%, #FFECE5 100%);
+        background-color: white;
     }
     
     /* Page header animation */
     .university-header {
-        color: var(--dark-orange);
+        color: var(--dark-blue);
         text-align: center;
         margin: 3rem 0;
         font-family: 'Montserrat', sans-serif;
@@ -57,7 +57,7 @@
         left: 0;
         width: 100%;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
         transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.8s ease;
@@ -72,7 +72,7 @@
         transform: translateX(-50%);
         width: 100px;
         height: 4px;
-        background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
         border-radius: 2px;
         animation: linePulse 3s infinite;
     }
@@ -197,7 +197,7 @@
     }
     
     .status-apply {
-        background: linear-gradient(135deg, var(--secondary-orange) 0%, var(--primary-orange) 100%);
+        background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
         color: white;
     }
     
@@ -223,7 +223,7 @@
         left: 0;
         width: 40px;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
         transition: width 0.4s ease;
     }
     
@@ -263,7 +263,7 @@
     
     .institute-meta i {
         margin-right: 0.7rem;
-        color: var(--primary-orange);
+        color: var(--primary-blue);
         font-size: 1rem;
         min-width: 20px;
         transition: all 0.3s ease;
@@ -271,7 +271,7 @@
     
     .university-card:hover .institute-meta i {
         transform: scale(1.1);
-        color: var(--secondary-orange);
+        color: var(--secondary-blue);
     }
     
     /* Floating action button */
@@ -282,7 +282,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         display: flex;
         align-items: center;
@@ -290,7 +290,7 @@
         opacity: 0;
         transform: translateY(10px);
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
         z-index: 2;
     }
     
@@ -301,7 +301,31 @@
     
     .card-action-btn:hover {
         transform: translateY(-3px) scale(1.1);
-        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        box-shadow: 0 6px 20px rgba(44, 62, 80, 0.4);
+    }
+    
+    /* Button styles */
+    .btn-blue {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-blue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.4);
+        color: white;
+    }
+    
+    .btn-outline-blue {
+        border: 1px solid var(--primary-blue);
+        color: var(--primary-blue);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-blue:hover {
+        background-color: rgba(44, 62, 80, 0.1);
     }
     
     /* Animations */
@@ -338,9 +362,9 @@
     }
     
     @keyframes linePulse {
-        0% { width: 100px; opacity: 1; }
+        from { width: 100px; opacity: 1; }
         50% { width: 150px; opacity: 0.8; }
-        100% { width: 100px; opacity: 1; }
+        to { width: 100px; opacity: 1; }
     }
 
     /* MODAL STYLES */
@@ -360,51 +384,28 @@
         opacity: 1;
     }
     
-    .bg-gradient-orange {
-        background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+    .bg-gradient-blue {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
     }
     
-    .text-orange {
-        color: var(--primary-orange);
-    }
-    
-    .btn-orange {
-        background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-orange:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-        color: white;
-    }
-    
-    .btn-outline-orange {
-        border: 1px solid var(--primary-orange);
-        color: var(--primary-orange);
-        transition: all 0.3s ease;
-    }
-    
-    .btn-outline-orange:hover {
-        background-color: rgba(255, 107, 53, 0.1);
+    .text-blue {
+        color: var(--primary-blue);
     }
     
     .form-control:focus, .form-select:focus {
-        border-color: var(--primary-orange);
-        box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.2);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.2);
     }
     
     .file-upload-card {
-        background-color: rgba(255, 107, 53, 0.03);
-        border: 1px dashed rgba(255, 107, 53, 0.3) !important;
+        background-color: rgba(44, 62, 80, 0.03);
+        border: 1px dashed rgba(44, 62, 80, 0.3) !important;
         transition: all 0.3s ease;
     }
     
     .file-upload-card:hover {
-        background-color: rgba(255, 107, 53, 0.05);
-        border-color: var(--primary-orange) !important;
+        background-color: rgba(44, 62, 80, 0.05);
+        border-color: var(--primary-blue) !important;
     }
     
     .file-upload-input {
@@ -418,11 +419,11 @@
     }
     
     .file-upload-list .file-item {
-        background: rgba(255, 107, 53, 0.1);
+        background: rgba(44, 62, 80, 0.1);
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         font-size: 0.8rem;
-        color: var(--primary-orange);
+        color: var(--primary-blue);
     }
     
     /* Responsive adjustments */
@@ -472,8 +473,8 @@
     }
 </style>
 
-<!-- Particle Background Canvas -->
-<canvas class="particle-background" id="particleCanvas"></canvas>
+<!-- Particle Background -->
+<div id="particles-js"></div>
 
 <div class="universities-container">
     <h1 class="university-header">
@@ -482,7 +483,7 @@
     
     <!-- Add University Button -->
     <div class="text-center mb-5">
-        <a href="{% url 'upload_institute' %}" class="btn btn-orange">Add Universities</a>
+        <a href="{% url 'upload_institute' %}" class="btn btn-blue">Add Universities</a>
     </div>
     
     <div class="row g-4">
@@ -545,7 +546,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0">
             <!-- Modal Header -->
-            <div class="modal-header bg-gradient-orange text-white border-0 position-relative">
+            <div class="modal-header bg-gradient-blue text-white border-0 position-relative">
                 <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" style="background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')"></div>
                 <h5 class="modal-title fs-4 fw-bold">
                     <i class="fas fa-university me-2"></i>Add New University
@@ -622,11 +623,11 @@
                         </div>
                         
                         <div class="col-12 mt-4">
-                            <label for="images" class="form-label fw-bold text-orange mb-3">University Images</label>
+                            <label for="images" class="form-label fw-bold text-blue mb-3">University Images</label>
                             <div class="file-upload-card p-4 border rounded-3 position-relative">
                                 <input type="file" class="d-none" id="images" name="images" multiple accept="image/*">
                                 <label for="images" class="file-upload-preview text-center py-4 d-block m-0" style="cursor: pointer;">
-                                    <i class="fas fa-cloud-upload-alt fa-3x text-orange mb-3"></i>
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-blue mb-3"></i>
                                     <h5 class="mb-2">Drag & drop files here</h5>
                                     <p class="text-muted mb-0">or click to browse</p>
                                     <div class="file-upload-list mt-3 d-flex flex-wrap gap-2 justify-content-center"></div>
@@ -639,10 +640,10 @@
             
             <!-- Modal Footer -->
             <div class="modal-footer border-0 bg-light">
-                <button type="button" class="btn btn-outline-orange px-4 py-2" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-outline-blue px-4 py-2" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Cancel
                 </button>
-                <button type="submit" form="addUniversityForm" class="btn btn-orange px-4 py-2">
+                <button type="submit" form="addUniversityForm" class="btn btn-blue px-4 py-2">
                     <i class="fas fa-save me-2"></i>Save University
                 </button>
             </div>
@@ -650,128 +651,143 @@
     </div>
 </div>
 
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Particle Background Animation
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        // Mouse position tracking
-        let mouseX = canvas.width / 2;
-        let mouseY = canvas.height / 2;
-        
-        document.addEventListener('mousemove', function(event) {
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-        });
-        
-        // Particle constructor
-        function Particle() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 4 + 1;
-            this.speedX = Math.random() * 1 - 0.5;
-            this.speedY = Math.random() * 1 - 0.5;
-            this.color = `hsla(${Math.floor(Math.random() * 20 + 15)}, 100%, 60%, ${Math.random() * 0.5 + 0.2})`;
-            this.angle = 0;
-            this.velocity = Math.random() * 0.02;
-            this.radius = Math.random() * 50 + 50;
-            this.distanceToMouse = 0;
-            this.affectedByMouse = false;
-        }
-        
-        // Update particle position
-        Particle.prototype.update = function() {
-            // Calculate distance to mouse
-            const dx = mouseX - this.x;
-            const dy = mouseY - this.y;
-            this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
-            
-            // If particle is close to mouse, make it interactive
-            if (this.distanceToMouse < 150) {
-                this.affectedByMouse = true;
-                const forceDirectionX = dx / this.distanceToMouse;
-                const forceDirectionY = dy / this.distanceToMouse;
-                const force = (150 - this.distanceToMouse) / 150 * 2;
-                
-                this.x -= forceDirectionX * force;
-                this.y -= forceDirectionY * force;
-            } else {
-                this.affectedByMouse = false;
-                // Normal particle movement
-                this.angle += this.velocity;
-                this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
-                this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
-            }
-            
-            // Boundary check
-            if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-            if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-        };
-        
-        // Draw particle
-        Particle.prototype.draw = function() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            
-            // Make particles near mouse brighter and larger
-            if (this.affectedByMouse) {
-                ctx.fillStyle = `hsla(${Math.floor(Math.random() * 20 + 15)}, 100%, 65%, 0.8)`;
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = this.color;
-            } else {
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
-            }
-            
-            ctx.fill();
-        };
-        
-        // Create particles
-        let particles = [];
-        const particleCount = window.innerWidth < 768 ? 80 : 150;
-        
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw connecting lines
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    const dx = particles[a].x - particles[b].x;
-                    const dy = particles[a].y - particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 150) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `hsla(20, 100%, 70%, ${1 - distance/150})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
+        // Initialize particles.js with blue theme
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#3498db" // Blue color
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 2,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#3498db",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
                     }
                 }
-                particles[a].update();
-                particles[a].draw();
+            },
+            "interactivity": {
+                "detect_on": "window",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 150,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+        
+        // Add custom mouse interaction for stronger particle attraction
+        document.addEventListener('mousemove', function(e) {
+            if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
+                // Get the mouse position
+                var mouseX = e.clientX;
+                var mouseY = e.clientY;
+                
+                // Get all particles
+                var particles = particlesJS.particles.array;
+                
+                // Attract particles to mouse position
+                for (var i = 0; i < particles.length; i++) {
+                    var particle = particles[i];
+                    var dx = mouseX - particle.x;
+                    var dy = mouseY - particle.y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Only affect particles within a certain distance
+                    if (distance < 200) {
+                        var forceDirectionX = dx / distance;
+                        var forceDirectionY = dy / distance;
+                        var force = (200 - distance) / 200 * 3; // Stronger when closer
+                        
+                        // Apply force to particle velocity
+                        particle.vx = forceDirectionX * force;
+                        particle.vy = forceDirectionY * force;
+                    }
+                }
             }
-            
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
         
         // Enhanced Card Interactions
@@ -803,16 +819,7 @@
                 card.style.transform = 'translateY(0) scale(1)';
             });
         });
-
-         // File Upload Handling - Fixed Version
-         const fileInput = document.getElementById('images');
-        if (fileInput) {
-            // [Keep your existing file upload handling code...]
-        }
-
-       
     });
-    
 </script>
 
 {% endblock %}

@@ -4,27 +4,29 @@
 {% block content %}
 <style>
     :root {
-        /* Brown Theme Color Variables */
-        --primary-brown: #8B4513;  /* SaddleBrown */
-        --dark-brown: #5D4037;     /* DarkBrown */
-        --light-brown: #A1887F;    /* LightBrown */
-        --card-bg: rgba(139, 69, 19, 0.1);
-        --card-border: rgba(161, 136, 127, 0.3);
-        --text-glow: 0 0 15px rgba(161, 136, 127, 0.4);
-        --modal-bg: rgba(30, 20, 15, 0.96);
-        --modal-border: rgba(255, 255, 255, 0.15);
-        --hover-glow: 0 0 20px rgba(161, 136, 127, 0.3);
+        /* Blue Theme Color Variables */
+        --primary-blue: #2c3e50;  /* Dark Blue */
+        --secondary-blue: #3498db; /* Medium Blue */
+        --light-blue: #98c1ff;    /* Light Blue */
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(44, 62, 80, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(44, 62, 80, 0.2);
+        --modal-bg: rgba(255, 255, 255, 0.98);
+        --modal-border: rgba(44, 62, 80, 0.1);
     }
     
     /* Particle Background Canvas */
-    .particle-background {
+    #particles-js {
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         z-index: -1;
-        background: linear-gradient(135deg, #F5F1EE 0%, #E8E0DB 100%);
+        background-color: white;
     }
     
     /* Base Card Styles */
@@ -35,7 +37,7 @@
         border: 1px solid var(--card-border);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
-        box-shadow: 0 12px 30px rgba(93, 64, 55, 0.25);
+        box-shadow: var(--shadow-light);
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -47,9 +49,8 @@
     /* Card Hover Effects */
     .circular-card:hover {
         transform: translateY(-10px) scale(1.03);
-        box-shadow: 0 20px 40px rgba(93, 64, 55, 0.35), 
-                    var(--hover-glow);
-        border-color: var(--light-brown);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--light-blue);
     }
 
     .circular-card::before {
@@ -61,7 +62,7 @@
         bottom: 0;
         background: linear-gradient(
             135deg, 
-            rgba(139, 69, 19, 0.2) 0%, 
+            rgba(44, 62, 80, 0.1) 0%, 
             transparent 70%
         );
         opacity: 0;
@@ -118,13 +119,13 @@
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 0.75rem;
-        color: var(--dark-brown);
+        color: var(--text-dark);
         text-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .admission-period {
         font-size: 1.05rem;
-        background: rgba(139, 69, 19, 0.35);
+        background: rgba(44, 62, 80, 0.35);
         color: white;
         display: inline-block;
         padding: 0.5rem 1.25rem;
@@ -135,7 +136,7 @@
     }
 
     .view-details-btn {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         color: white;
         border: none;
         border-radius: 50px;
@@ -144,7 +145,7 @@
         margin-top: auto;
         align-self: flex-start;
         transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.35);
+        box-shadow: 0 5px 20px rgba(44, 62, 80, 0.35);
         position: relative;
         overflow: hidden;
     }
@@ -166,9 +167,9 @@
     }
 
     .view-details-btn:hover {
-        background: var(--dark-brown);
+        background: var(--secondary-blue);
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.45);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.45);
     }
 
     .view-details-btn:hover::before {
@@ -192,9 +193,9 @@
     .delete-modal .modal-content {
         background: var(--modal-bg);
         border-radius: 20px;
-        color: white;
+        color: var(--text-dark);
         border: 1px solid var(--modal-border);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
         transform: scale(0.95);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
@@ -206,7 +207,8 @@
 
     .modal-header {
         border-bottom: 1px solid var(--modal-border);
-        background: rgba(0, 0, 0, 0.4);
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
         padding: 1.75rem;
     }
 
@@ -219,7 +221,7 @@
 
     .modal-title i {
         margin-right: 15px;
-        color: var(--light-brown);
+        color: var(--light-blue);
         font-size: 1.5rem;
     }
 
@@ -287,7 +289,7 @@
     }
 
     .zoom-btn:hover {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         transform: scale(1.1);
     }
 
@@ -329,7 +331,7 @@
         max-width: 100%;
         object-fit: contain;
         border-radius: 15px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
         transition: transform 0.5s ease;
     }
 
@@ -344,7 +346,7 @@
     }
 
     .programs-container {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(44, 62, 80, 0.08);
         backdrop-filter: blur(15px);
         border-radius: 15px;
         padding: 2rem;
@@ -358,7 +360,7 @@
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
-        color: var(--light-brown);
+        color: var(--primary-blue);
     }
 
     .programs-container h6 i {
@@ -366,17 +368,17 @@
     }
 
     .details-container {
-        background: rgba(0, 0, 0, 0.25);
+        background: rgba(44, 62, 80, 0.05);
         backdrop-filter: blur(15px);
         border-radius: 15px;
         padding: 2rem;
         border: 1px solid var(--modal-border);
-        box-shadow: inset 0 0 25px rgba(0,0,0,0.3);
+        box-shadow: inset 0 0 25px rgba(0,0,0,0.1);
     }
 
     /* Contact Modal Specific */
     .contact-info {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(44, 62, 80, 0.08);
         backdrop-filter: blur(15px);
         padding: 2rem;
         border-radius: 15px;
@@ -397,19 +399,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(161, 136, 127, 0.15);
+        background: rgba(44, 62, 80, 0.15);
         border-radius: 50%;
         margin-right: 18px;
         font-size: 1.2rem;
-        color: var(--light-brown);
+        color: var(--primary-blue);
         flex-shrink: 0;
-        border: 1px solid rgba(161, 136, 127, 0.3);
+        border: 1px solid rgba(44, 62, 80, 0.3);
     }
 
     .contact-item h6 {
         font-size: 1.2rem;
         margin-bottom: 0.5rem;
-        color: var(--light-brown);
+        color: var(--primary-blue);
     }
 
     /* Action Buttons */
@@ -437,14 +439,14 @@
     }
     
     .update-btn {
-        background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
     }
     
     .update-btn:hover {
-        background: linear-gradient(135deg, var(--dark-brown), var(--primary-brown));
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(93, 64, 55, 0.4);
+        box-shadow: 0 8px 20px rgba(44, 62, 80, 0.4);
     }
     
     .delete-btn {
@@ -462,9 +464,9 @@
     .delete-modal .modal-content {
         background: var(--modal-bg);
         border-radius: 20px;
-        color: white;
+        color: var(--text-dark);
         border: 1px solid var(--modal-border);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
         transform: scale(0.95);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
@@ -496,34 +498,36 @@
 
     /* Buttons */
     .btn-outline-light {
-        border: 2px solid rgba(255,255,255,0.25);
+        border: 2px solid rgba(44, 62, 80, 0.25);
         background: transparent;
-        color: white;
+        color: var(--text-dark);
         padding: 0.7rem 1.8rem;
         transition: all 0.3s ease;
     }
 
     .btn-outline-light:hover {
-        background: rgba(255,255,255,0.1);
-        border-color: white;
-        color: white;
+        background: rgba(44, 62, 80, 0.1);
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
     }
 
     .btn-primary {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         border: none;
         padding: 0.8rem 2rem;
         font-weight: 500;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.4);
+        box-shadow: 0 5px 20px rgba(44, 62, 80, 0.4);
+        color: white;
     }
 
     .btn-primary:hover {
-        background: var(--dark-brown);
+        background: var(--secondary-blue);
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.5);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.5);
+        color: white;
     }
 
     .btn-danger {
@@ -535,12 +539,14 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        color: white;
     }
 
     .btn-danger:hover {
         background: #c0392b;
         transform: translateY(-3px);
         box-shadow: 0 10px 30px rgba(192, 57, 43, 0.5);
+        color: white;
     }
 
     /* Animations */
@@ -714,320 +720,23 @@
             gap: 0.5rem;
         }
     }
-    .animate__animated {
-        --animate-duration: 0.5s;
-        opacity: 0;
-    }
-    
-    .animate__zoomIn {
-        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    
-    .animate__fadeInDown {
-        animation: fadeInDown 0.5s ease forwards;
-    }
-    
-    .animate__fadeInUp {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-    
-    .animate__fadeInLeft {
-        animation: fadeInLeft 0.5s ease forwards;
-    }
-    
-    .animate__fadeInRight {
-        animation: fadeInRight 0.5s ease forwards;
-    }
-    
-    .animate__fadeIn {
-        animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .animate__pulse {
-        animation: pulse 1.5s infinite;
-    }
-    
-    /* Animation delays */
-    .animate__delay-1s {
-        animation-delay: 0.1s;
-    }
-    
-    .animate__delay-2s {
-        animation-delay: 0.2s;
-    }
-    
-    .animate__delay-3s {
-        animation-delay: 0.3s;
-    }
-    
-    .animate__delay-4s {
-        animation-delay: 0.4s;
-    }
-    
-    /* Keyframe animations */
-    @keyframes zoomIn {
-        from {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-     /* Custom Modal Styles */
-     .update-modal .modal-content {
-        border-radius: 12px;
-        overflow: hidden;
-        transform-origin: center;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .update-modal .form-group input:focus,
-    .update-modal .form-group textarea:focus,
-    .update-modal .form-group select:focus {
-        outline: none;
-        border-color: #d4a373 !important;
-        box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2) !important;
-        background: rgba(255, 255, 255, 0.15) !important;
-    }
-    
-    /* Animation Styles */
-    .animate__animated {
-        --animate-duration: 0.5s;
-        opacity: 0;
-    }
-    
-    .animate__zoomIn {
-        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    
-    .animate__fadeInDown {
-        animation: fadeInDown 0.5s ease forwards;
-    }
-    
-    .animate__fadeInUp {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-    
-    .animate__fadeInLeft {
-        animation: fadeInLeft 0.5s ease forwards;
-    }
-    
-    .animate__fadeInRight {
-        animation: fadeInRight 0.5s ease forwards;
-    }
-    
-    .animate__fadeIn {
-        animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .animate__pulse {
-        animation: pulse 1.5s infinite;
-    }
-    
-    /* Animation Delays */
-    .animate__delay-1s {
-        animation-delay: 0.1s;
-    }
-    
-    .animate__delay-2s {
-        animation-delay: 0.2s;
-    }
-    
-    .animate__delay-3s {
-        animation-delay: 0.3s;
-    }
-    
-    .animate__delay-4s {
-        animation-delay: 0.4s;
-    }
-    
-    /* Keyframe Animations */
-    @keyframes zoomIn {
-        from {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.03);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-    
-    /* Hover Effects */
-    .update-modal .btn-outline-light:hover {
-        background: rgba(212, 163, 115, 0.1) !important;
-        border-color: #d4a373 !important;
-        color: #d4a373 !important;
-    }
-    
-    .update-modal .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5) !important;
-        background: linear-gradient(135deg, #7B3D13, #5B2D13) !important;
-    }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .update-modal .modal-dialog {
-            margin: 1rem;
-        }
-        
-        .update-modal .modal-content {
-            border-radius: 8px;
-        }
-        
-        .update-modal .form-group {
-            margin-bottom: 1rem;
-        }
-    }
 </style>
 
-<!-- Particle Background Canvas -->
-<canvas class="particle-background" id="particleCanvas"></canvas>
+<!-- Particle Background -->
+<div id="particles-js"></div>
 
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold mb-3" style="color: var(--dark-brown);">
+        <h1 class="display-4 fw-bold mb-3" style="color: var(--primary-blue);">
             ADMISSION CIRCULARS
         </h1>
-        <p class="lead" style="color: var(--light-brown);">Explore current admission opportunities</p>
+        <p class="lead" style="color: var(--secondary-blue);">Explore current admission opportunities</p>
     </div>
- <!-- Add University Button -->
- <div class="text-center mb-5">
-    <a href="{% url 'upload_circular' %}" class="btn btn-outline-dark">Add Circulars</a>
-</div>
+    
+    <!-- Add Circular Button -->
+    <div class="text-center mb-5">
+        <a href="{% url 'upload_circular' %}" class="btn btn-primary">Add Circulars</a>
+    </div>
 
     {% if institutes %}
     <div class="row g-4">
@@ -1040,7 +749,7 @@
                         {% if institute.images.first %}
                         <img src="{{ institute.images.first.image.url }}" class="institute-image" alt="{{ institute.title }}">
                         {% else %}
-                        <div class="h-100 d-flex align-items-center justify-content-center" style="background: var(--primary-brown);">
+                        <div class="h-100 d-flex align-items-center justify-content-center" style="background: var(--primary-blue);">
                             <i class="fas fa-image fa-3x text-white-50"></i>
                         </div>
                         {% endif %}
@@ -1064,12 +773,12 @@
     </div>
     {% else %}
     <div class="text-center py-5">
-        <div class="card" style="background: rgba(139, 69, 19, 0.2); border: 1px dashed var(--light-brown);">
+        <div class="card" style="background: rgba(44, 62, 80, 0.1); border: 1px dashed var(--light-blue);">
             <div class="card-body py-5">
-                <i class="fas fa-calendar-times fa-4x mb-4" style="color: var(--light-brown);"></i>
-                <h3 class="mb-3" style="color: var(--dark-brown);">No admission circulars available</h3>
-                <p style="color: var(--light-brown);">Please check back later for updates</p>
-                <button class="btn btn-outline-light mt-3" style="border-color: var(--light-brown); color: var(--dark-brown);">
+                <i class="fas fa-calendar-times fa-4x mb-4" style="color: var(--light-blue);"></i>
+                <h3 class="mb-3" style="color: var(--primary-blue);">No admission circulars available</h3>
+                <p style="color: var(--secondary-blue);">Please check back later for updates</p>
+                <button class="btn btn-outline-light mt-3" style="border-color: var(--light-blue); color: var(--primary-blue);">
                     <i class="fas fa-bell me-2"></i> Get Notified
                 </button>
             </div>
@@ -1084,7 +793,7 @@
     <div class="modal fade circular-modal" id="circularModal{{ circular.id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header text-white">
+                <div class="modal-header">
                     <h5 class="modal-title">{{ institute.title }} Admission</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -1124,7 +833,7 @@
                                     </button>
                                 </div>
                                 {% else %}
-                                <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: var(--primary-brown);">
+                                <div class="d-flex align-items-center justify-content-center" style="height: 300px; background: var(--primary-blue);">
                                     <i class="fas fa-image fa-4x text-white-50"></i>
                                 </div>
                                 {% endif %}
@@ -1164,68 +873,65 @@
         </div>
     </div>
     
-<!-- Update Circular Modal -->
-<div class="modal fade update-modal" id="updateCircularModal{{ circular.id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content animate__animated animate__zoomIn" style="background: linear-gradient(135deg, rgba(30, 20, 15, 0.98), rgba(50, 35, 25, 0.98)); border: 1px solid rgba(161, 136, 127, 0.3); box-shadow: 0 10px 30px rgba(93, 64, 55, 0.5);">
-            <div class="modal-header" style="border-bottom: 1px solid rgba(161, 136, 127, 0.3); background: rgba(139, 69, 19, 0.3);">
-                <h5 class="modal-title animate__animated animate__fadeInDown" style="color: #d4a373;">
-                    <i class="fas fa-edit me-2"></i> Update Circular
-                </h5>
-                <button type="button" class="btn-close btn-close-white animate__animated animate__fadeIn" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0.8);"></button>
+    <!-- Update Circular Modal -->
+    <div class="modal fade update-modal" id="updateCircularModal{{ circular.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i> Update Circular
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'circulars' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_circular">
+                    <input type="hidden" name="circular_id" value="{{ circular.id }}">
+                    
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title{{ circular.id }}">Title</label>
+                            <input type="text" id="title{{ circular.id }}" name="title" value="{{ circular.title }}" required 
+                                   class="form-control">
+                        </div>
+                        
+                        <div class="form-group mt-3">
+                            <label for="admission_period{{ circular.id }}">Admission Period</label>
+                            <input type="text" id="admission_period{{ circular.id }}" name="admission_period" value="{{ circular.admission_period }}" required 
+                                   class="form-control">
+                        </div>
+                        
+                        <div class="form-group mt-3">
+                            <label for="programs{{ circular.id }}">Programs</label>
+                            <textarea id="programs{{ circular.id }}" name="programs" required 
+                                      class="form-control" rows="4">{{ circular.programs }}</textarea>
+                        </div>
+                        
+                        <div class="form-group mt-3">
+                            <label for="details{{ circular.id }}">Details</label>
+                            <textarea id="details{{ circular.id }}" name="details" required 
+                                      class="form-control" rows="4">{{ circular.details }}</textarea>
+                        </div>
+                        
+                        {% if has_is_active %}
+                        <div class="form-group mt-3">
+                            <label for="is_active{{ circular.id }}">Status</label>
+                            <select id="is_active{{ circular.id }}" name="is_active" required class="form-control">
+                                <option value="true" {% if circular.is_active %}selected{% endif %}>Active</option>
+                                <option value="false" {% if not circular.is_active %}selected{% endif %}>Inactive</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Circular</button>
+                    </div>
+                </form>
             </div>
-            <form method="post" action="{% url 'circulars' %}">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="update_circular">
-                <input type="hidden" name="circular_id" value="{{ circular.id }}">
-                
-                <div class="modal-body" style="background: rgba(20, 15, 10, 0.7);">
-                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-1s">
-                        <label for="title{{ circular.id }}" style="color: #d4a373; font-weight: 500;">Title</label>
-                        <input type="text" id="title{{ circular.id }}" name="title" value="{{ circular.title }}" required 
-                               style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(161, 136, 127, 0.3); color: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; width: 100%;">
-                    </div>
-                    
-                    <div class="form-group animate__animated animate__fadeInRight animate__delay-1s mt-4">
-                        <label for="admission_period{{ circular.id }}" style="color: #d4a373; font-weight: 500;">Admission Period</label>
-                        <input type="text" id="admission_period{{ circular.id }}" name="admission_period" value="{{ circular.admission_period }}" required 
-                               style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(161, 136, 127, 0.3); color: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; width: 100%;">
-                    </div>
-                    
-                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-2s mt-4">
-                        <label for="programs{{ circular.id }}" style="color: #d4a373; font-weight: 500;">Programs</label>
-                        <textarea id="programs{{ circular.id }}" name="programs" required 
-                                  style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(161, 136, 127, 0.3); color: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; width: 100%; min-height: 120px;">{{ circular.programs }}</textarea>
-                    </div>
-                    
-                    <div class="form-group animate__animated animate__fadeInRight animate__delay-2s mt-4">
-                        <label for="details{{ circular.id }}" style="color: #d4a373; font-weight: 500;">Details</label>
-                        <textarea id="details{{ circular.id }}" name="details" required 
-                                  style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(161, 136, 127, 0.3); color: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; width: 100%; min-height: 120px;">{{ circular.details }}</textarea>
-                    </div>
-                    
-                    {% if has_is_active %}
-                    <div class="form-group animate__animated animate__fadeInLeft animate__delay-3s mt-4">
-                        <label for="is_active{{ circular.id }}" style="color: #d4a373; font-weight: 500;">Status</label>
-                        <select id="is_active{{ circular.id }}" name="is_active" required 
-                                style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(161, 136, 127, 0.3); color: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; width: 100%;">
-                            <option value="true" {% if circular.is_active %}selected{% endif %}>Active</option>
-                            <option value="false" {% if not circular.is_active %}selected{% endif %}>Inactive</option>
-                        </select>
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <div class="modal-footer animate__animated animate__fadeInUp animate__delay-4s" style="border-top: 1px solid rgba(161, 136, 127, 0.3); background: rgba(139, 69, 19, 0.2);">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" 
-                            style="border-color: rgba(161, 136, 127, 0.5); color: #d4a373;">Cancel</button>
-                    <button type="submit" class="btn btn-primary" 
-                            style="background: linear-gradient(135deg, #8B4513, #6B3E13); border: none; box-shadow: 0 4px 15px rgba(139, 69, 19, 0.4);">Update Circular</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
     
     <!-- Delete Circular Modal -->
     <div class="modal fade delete-modal" id="deleteCircularModal{{ circular.id }}" tabindex="-1" aria-hidden="true">
@@ -1261,8 +967,8 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-white"><i class="fas fa-university"></i> Contact {{ institute.title }}</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title"><i class="fas fa-university"></i> Contact {{ institute.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="contact-info">
@@ -1307,131 +1013,143 @@
 </div>
 {% endfor %}
 
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Interactive Particle Background
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    // Mouse position tracking
-    let mouseX = canvas.width / 2;
-    let mouseY = canvas.height / 2;
-    
-    document.addEventListener('mousemove', function(event) {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    });
-    
-    // Brown-themed particle colors
-    const brownColors = [
-        'hsla(25, 75%, 35%, 0.7)',    // Darker brown
-        'hsla(25, 60%, 45%, 0.7)',     // Medium brown
-        'hsla(25, 50%, 60%, 0.7)',     // Light brown
-        'hsla(25, 40%, 70%, 0.7)'      // Very light brown
-    ];
-    
-    // Particle constructor
-    function Particle() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 5 + 2;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
-        this.color = brownColors[Math.floor(Math.random() * brownColors.length)];
-        this.angle = 0;
-        this.velocity = Math.random() * 0.02;
-        this.radius = Math.random() * 50 + 50;
-        this.distanceToMouse = 0;
-        this.affectedByMouse = false;
-    }
-    
-    // Update particle position
-    Particle.prototype.update = function() {
-        const dx = mouseX - this.x;
-        const dy = mouseY - this.y;
-        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
-        
-        if (this.distanceToMouse < 150) {
-            this.affectedByMouse = true;
-            const forceDirectionX = dx / this.distanceToMouse;
-            const forceDirectionY = dy / this.distanceToMouse;
-            const force = (150 - this.distanceToMouse) / 150 * 2;
-            
-            this.x -= forceDirectionX * force;
-            this.y -= forceDirectionY * force;
-        } else {
-            this.affectedByMouse = false;
-            this.angle += this.velocity;
-            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
-            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
-        }
-        
-        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-    };
-    
-    // Draw particle
-    Particle.prototype.draw = function() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        
-        if (this.affectedByMouse) {
-            ctx.fillStyle = `hsla(25, 75%, 50%, 0.9)`;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = 'rgba(139, 69, 19, 0.7)';
-        } else {
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(139, 69, 19, 0.5)';
-        }
-        
-        ctx.fill();
-    };
-    
-    // Create particles
-    let particles = [];
-    const particleCount = window.innerWidth < 768 ? 80 : 150;
-    
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-    
-    // Animation loop
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw connecting lines
-        for (let a = 0; a < particles.length; a++) {
-            for (let b = a; b < particles.length; b++) {
-                const dx = particles[a].x - particles[b].x;
-                const dy = particles[a].y - particles[b].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `hsla(25, 60%, 50%, ${1 - distance/150})`;
-                    ctx.lineWidth = 0.8;
-                    ctx.moveTo(particles[a].x, particles[a].y);
-                    ctx.lineTo(particles[b].x, particles[b].y);
-                    ctx.stroke();
+    // Initialize particles.js with blue theme
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#3498db" // Blue color
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 2,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#3498db",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": true,
+                    "rotateX": 600,
+                    "rotateY": 1200
                 }
             }
-            particles[a].update();
-            particles[a].draw();
+        },
+        "interactivity": {
+            "detect_on": "window",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+    });
+    
+    // Add custom mouse interaction for stronger particle attraction
+    document.addEventListener('mousemove', function(e) {
+        if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
+            // Get the mouse position
+            var mouseX = e.clientX;
+            var mouseY = e.clientY;
+            
+            // Get all particles
+            var particles = particlesJS.particles.array;
+            
+            // Attract particles to mouse position
+            for (var i = 0; i < particles.length; i++) {
+                var particle = particles[i];
+                var dx = mouseX - particle.x;
+                var dy = mouseY - particle.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Only affect particles within a certain distance
+                if (distance < 200) {
+                    var forceDirectionX = dx / distance;
+                    var forceDirectionY = dy / distance;
+                    var force = (200 - distance) / 200 * 3; // Stronger when closer
+                    
+                    // Apply force to particle velocity
+                    particle.vx = forceDirectionX * force;
+                    particle.vy = forceDirectionY * force;
+                }
+            }
         }
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
     });
 
     // Zoom and Pan Functionality
@@ -1643,47 +1361,6 @@ function showToast(type, message) {
         }, 300);
     }, 5000);
 }
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize modal animations
-    const updateModals = document.querySelectorAll('.update-modal');
-    
-    updateModals.forEach(modal => {
-        modal.addEventListener('show.bs.modal', function() {
-            const modalContent = this.querySelector('.modal-content');
-            const animatedElements = this.querySelectorAll('.animate__animated');
-            
-            // Reset animations
-            animatedElements.forEach(el => {
-                el.style.animation = 'none';
-                void el.offsetWidth; // Trigger reflow
-                el.style.animation = '';
-            });
-            
-            // Ensure modal content is visible
-            modalContent.style.opacity = '1';
-        });
-        
-        modal.addEventListener('hidden.bs.modal', function() {
-            const animatedElements = this.querySelectorAll('.animate__animated');
-            animatedElements.forEach(el => {
-                el.style.animation = 'none';
-                el.style.opacity = '0';
-            });
-        });
-    });
-    
-    // Add hover effect to submit button
-    const submitButtons = document.querySelectorAll('.modal-footer .btn-primary');
-    submitButtons.forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.classList.add('animate__pulse');
-        });
-        btn.addEventListener('mouseleave', function() {
-            this.classList.remove('animate__pulse');
-        });
-    });
-});
-
 </script>
 
 {% endblock %}

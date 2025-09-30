@@ -1,31 +1,30 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 <style>
     :root {
-        /* Brown Theme Color Variables */
-        --primary-brown: #8B4513;  /* SaddleBrown */
-        --dark-brown: #5D4037;     /* DarkBrown */
-        --light-brown: #A1887F;    /* LightBrown */
-        --card-bg: rgba(139, 69, 19, 0.1);
-        --card-border: rgba(161, 136, 127, 0.3);
-        --text-glow: 0 0 15px rgba(161, 136, 127, 0.4);
-        --modal-bg: rgba(30, 20, 15, 0.96);
-        --modal-border: rgba(255, 255, 255, 0.15);
-        --hover-glow: 0 0 20px rgba(161, 136, 127, 0.3);
+        /* Blue Theme Color Variables */
+        --primary-blue: #2c3e50;  /* Dark Blue */
+        --secondary-blue: #3498db; /* Medium Blue */
+        --light-blue: #98c1ff;    /* Light Blue */
+        --card-bg: rgba(44, 62, 80, 0.1);
+        --card-border: rgba(52, 152, 219, 0.3);
+        --text-glow: 0 0 15px rgba(52, 152, 219, 0.4);
+        --modal-bg: rgba(240, 245, 250, 0.96);
+        --modal-border: rgba(44, 62, 80, 0.15);
+        --hover-glow: 0 0 20px rgba(52, 152, 219, 0.3);
     }
     
     /* Particle Background Canvas */
-    .particle-background {
+    #particles-js {
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         z-index: -1;
-        background: linear-gradient(135deg, #F5F1EE 0%, #E8E0DB 100%);
+        background-color: white;
     }
     
     /* Base Card Styles */
@@ -36,7 +35,7 @@
         border: 1px solid var(--card-border);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
-        box-shadow: 0 12px 30px rgba(93, 64, 55, 0.25);
+        box-shadow: 0 12px 30px rgba(44, 62, 80, 0.25);
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -48,9 +47,9 @@
     /* Card Hover Effects */
     .circular-card:hover {
         transform: translateY(-10px) scale(1.03);
-        box-shadow: 0 20px 40px rgba(93, 64, 55, 0.35), 
+        box-shadow: 0 20px 40px rgba(44, 62, 80, 0.35), 
                     var(--hover-glow);
-        border-color: var(--light-brown);
+        border-color: var(--light-blue);
     }
 
     .circular-card::before {
@@ -62,7 +61,7 @@
         bottom: 0;
         background: linear-gradient(
             135deg, 
-            rgba(139, 69, 19, 0.2) 0%, 
+            rgba(44, 62, 80, 0.2) 0%, 
             transparent 70%
         );
         opacity: 0;
@@ -119,13 +118,13 @@
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 0.75rem;
-        color: var(--dark-brown);
+        color: var(--primary-blue);
         text-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .admission-period {
         font-size: 1.05rem;
-        background: rgba(139, 69, 19, 0.35);
+        background: rgba(44, 62, 80, 0.35);
         color: white;
         display: inline-block;
         padding: 0.5rem 1.25rem;
@@ -136,7 +135,7 @@
     }
 
     .view-details-btn {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         color: white;
         border: none;
         border-radius: 50px;
@@ -145,7 +144,7 @@
         margin-top: auto;
         align-self: flex-start;
         transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.35);
+        box-shadow: 0 5px 20px rgba(44, 62, 80, 0.35);
         position: relative;
         overflow: hidden;
     }
@@ -167,9 +166,9 @@
     }
 
     .view-details-btn:hover {
-        background: var(--dark-brown);
+        background: var(--secondary-blue);
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.45);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.45);
     }
 
     .view-details-btn:hover::before {
@@ -193,9 +192,9 @@
     .delete-modal .modal-content {
         background: var(--modal-bg);
         border-radius: 20px;
-        color: white;
+        color: var(--primary-blue);
         border: 1px solid var(--modal-border);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
         transform: scale(0.95);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
@@ -207,7 +206,7 @@
 
     .modal-header {
         border-bottom: 1px solid var(--modal-border);
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(240, 245, 250, 0.8);
         padding: 1.75rem;
     }
 
@@ -216,11 +215,12 @@
         font-size: 1.75rem;
         display: flex;
         align-items: center;
+        color: var(--primary-blue);
     }
 
     .modal-title i {
         margin-right: 15px;
-        color: var(--light-brown);
+        color: var(--secondary-blue);
         font-size: 1.5rem;
     }
 
@@ -288,7 +288,7 @@
     }
 
     .zoom-btn:hover {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         transform: scale(1.1);
     }
 
@@ -309,8 +309,8 @@
         height: 100%;
         background-size: cover;
         background-position: center;
-        filter: blur(12px) brightness(0.6);
-        opacity: 0.5;
+        filter: blur(12px) brightness(0.8);
+        opacity: 0.3;
         z-index: 0;
         transform: scale(1.1);
     }
@@ -330,7 +330,7 @@
         max-width: 100%;
         object-fit: contain;
         border-radius: 15px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
         transition: transform 0.5s ease;
     }
 
@@ -345,13 +345,13 @@
     }
 
     .programs-container {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(240, 245, 250, 0.5);
         backdrop-filter: blur(15px);
         border-radius: 15px;
         padding: 2rem;
         margin-bottom: 2rem;
         border: 1px solid var(--modal-border);
-        box-shadow: inset 0 0 25px rgba(255,255,255,0.03);
+        box-shadow: inset 0 0 25px rgba(255,255,255,0.1);
     }
 
     .programs-container h6 {
@@ -359,7 +359,7 @@
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
-        color: var(--light-brown);
+        color: var(--secondary-blue);
     }
 
     .programs-container h6 i {
@@ -367,23 +367,23 @@
     }
 
     .details-container {
-        background: rgba(0, 0, 0, 0.25);
+        background: rgba(240, 245, 250, 0.5);
         backdrop-filter: blur(15px);
         border-radius: 15px;
         padding: 2rem;
         border: 1px solid var(--modal-border);
-        box-shadow: inset 0 0 25px rgba(0,0,0,0.3);
+        box-shadow: inset 0 0 25px rgba(255,255,255,0.1);
     }
 
     /* Contact Modal Specific */
     .contact-info {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(240, 245, 250, 0.5);
         backdrop-filter: blur(15px);
         padding: 2rem;
         border-radius: 15px;
         margin-top: 1.5rem;
         border: 1px solid var(--modal-border);
-        box-shadow: inset 0 0 25px rgba(255,255,255,0.03);
+        box-shadow: inset 0 0 25px rgba(255,255,255,0.1);
     }
 
     .contact-item {
@@ -398,19 +398,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(161, 136, 127, 0.15);
+        background: rgba(52, 152, 219, 0.15);
         border-radius: 50%;
         margin-right: 18px;
         font-size: 1.2rem;
-        color: var(--light-brown);
+        color: var(--secondary-blue);
         flex-shrink: 0;
-        border: 1px solid rgba(161, 136, 127, 0.3);
+        border: 1px solid rgba(52, 152, 219, 0.3);
     }
 
     .contact-item h6 {
         font-size: 1.2rem;
         margin-bottom: 0.5rem;
-        color: var(--light-brown);
+        color: var(--secondary-blue);
     }
 
     /* Action Buttons */
@@ -438,14 +438,14 @@
     }
     
     .update-btn {
-        background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
     }
     
     .update-btn:hover {
-        background: linear-gradient(135deg, var(--dark-brown), var(--primary-brown));
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(93, 64, 55, 0.4);
+        box-shadow: 0 8px 20px rgba(44, 62, 80, 0.4);
     }
     
     .delete-btn {
@@ -463,9 +463,9 @@
     .delete-modal .modal-content {
         background: var(--modal-bg);
         border-radius: 20px;
-        color: white;
+        color: var(--primary-blue);
         border: 1px solid var(--modal-border);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
         transform: scale(0.95);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
@@ -497,34 +497,34 @@
 
     /* Buttons */
     .btn-outline-light {
-        border: 2px solid rgba(255,255,255,0.25);
+        border: 2px solid rgba(44, 62, 80, 0.25);
         background: transparent;
-        color: white;
+        color: var(--primary-blue);
         padding: 0.7rem 1.8rem;
         transition: all 0.3s ease;
     }
 
     .btn-outline-light:hover {
-        background: rgba(255,255,255,0.1);
-        border-color: white;
-        color: white;
+        background: rgba(44, 62, 80, 0.1);
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
     }
 
     .btn-primary {
-        background: var(--primary-brown);
+        background: var(--primary-blue);
         border: none;
         padding: 0.8rem 2rem;
         font-weight: 500;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.4);
+        box-shadow: 0 5px 20px rgba(44, 62, 80, 0.4);
     }
 
     .btn-primary:hover {
-        background: var(--dark-brown);
+        background: var(--secondary-blue);
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.5);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.5);
     }
 
     .btn-danger {
@@ -613,6 +613,72 @@
 
     .modal-footer {
         animation: fadeInUp 0.5s ease 0.4s both;
+    }
+
+    /* Form Styling */
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.1);
+        background-color: var(--modal-bg);
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    form p {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--primary-blue);
+        font-weight: 500;
+        animation: slideInLeft 0.4s ease-out;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #D7CCC8;
+        border-radius: 4px;
+        background-color: white;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.2);
+        outline: none;
+    }
+
+    input[type="submit"] {
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+
+    input[type="submit"]:hover {
+        background-color: var(--secondary-blue);
+        transform: translateY(-2px);
     }
 
     /* Responsive Adjustments */
@@ -715,409 +781,10 @@
             gap: 0.5rem;
         }
     }
-    .animate__animated {
-        --animate-duration: 0.5s;
-        opacity: 0;
-    }
-    
-    .animate__zoomIn {
-        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    
-    .animate__fadeInDown {
-        animation: fadeInDown 0.5s ease forwards;
-    }
-    
-    .animate__fadeInUp {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-    
-    .animate__fadeInLeft {
-        animation: fadeInLeft 0.5s ease forwards;
-    }
-    
-    .animate__fadeInRight {
-        animation: fadeInRight 0.5s ease forwards;
-    }
-    
-    .animate__fadeIn {
-        animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .animate__pulse {
-        animation: pulse 1.5s infinite;
-    }
-    
-    /* Animation delays */
-    .animate__delay-1s {
-        animation-delay: 0.1s;
-    }
-    
-    .animate__delay-2s {
-        animation-delay: 0.2s;
-    }
-    
-    .animate__delay-3s {
-        animation-delay: 0.3s;
-    }
-    
-    .animate__delay-4s {
-        animation-delay: 0.4s;
-    }
-    
-    /* Keyframe animations */
-    @keyframes zoomIn {
-        from {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-     /* Custom Modal Styles */
-     .update-modal .modal-content {
-        border-radius: 12px;
-        overflow: hidden;
-        transform-origin: center;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .update-modal .form-group input:focus,
-    .update-modal .form-group textarea:focus,
-    .update-modal .form-group select:focus {
-        outline: none;
-        border-color: #d4a373 !important;
-        box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2) !important;
-        background: rgba(255, 255, 255, 0.15) !important;
-    }
-    
-    /* Animation Styles */
-    .animate__animated {
-        --animate-duration: 0.5s;
-        opacity: 0;
-    }
-    
-    .animate__zoomIn {
-        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    
-    .animate__fadeInDown {
-        animation: fadeInDown 0.5s ease forwards;
-    }
-    
-    .animate__fadeInUp {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-    
-    .animate__fadeInLeft {
-        animation: fadeInLeft 0.5s ease forwards;
-    }
-    
-    .animate__fadeInRight {
-        animation: fadeInRight 0.5s ease forwards;
-    }
-    
-    .animate__fadeIn {
-        animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .animate__pulse {
-        animation: pulse 1.5s infinite;
-    }
-    
-    /* Animation Delays */
-    .animate__delay-1s {
-        animation-delay: 0.1s;
-    }
-    
-    .animate__delay-2s {
-        animation-delay: 0.2s;
-    }
-    
-    .animate__delay-3s {
-        animation-delay: 0.3s;
-    }
-    
-    .animate__delay-4s {
-        animation-delay: 0.4s;
-    }
-    
-    /* Keyframe Animations */
-    @keyframes zoomIn {
-        from {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translateX(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.03);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-    
-    /* Hover Effects */
-    .update-modal .btn-outline-light:hover {
-        background: rgba(212, 163, 115, 0.1) !important;
-        border-color: #d4a373 !important;
-        color: #d4a373 !important;
-    }
-    
-    .update-modal .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5) !important;
-        background: linear-gradient(135deg, #7B3D13, #5B2D13) !important;
-    }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .update-modal .modal-dialog {
-            margin: 1rem;
-        }
-        
-        .update-modal .modal-content {
-            border-radius: 8px;
-        }
-        
-        .update-modal .form-group {
-            margin-bottom: 1rem;
-        }
-    }
-      /* White and Brown Theme */
-      form {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
-        background-color: rgba(255, 255, 255, 0.9);
-        animation: fadeIn 0.6s ease-out;
-    }
-
-    form p {
-        margin-bottom: 20px;
-        position: relative;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 6px;
-        color: #5D4037;
-        font-weight: 500;
-        animation: slideInLeft 0.4s ease-out;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="file"],
-    textarea,
-    select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #D7CCC8;
-        border-radius: 4px;
-        background-color: #FFF;
-        transition: all 0.3s ease;
-        animation: fadeIn 0.5s ease-out;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-        border-color: #8D6E63;
-        box-shadow: 0 0 0 3px rgba(141, 110, 99, 0.2);
-        outline: none;
-    }
-
-    input[type="submit"] {
-        background-color: #8D6E63;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        animation: pulse 2s infinite;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #6D4C41;
-        transform: translateY(-2px);
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes slideInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(141, 110, 99, 0.4);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(141, 110, 99, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(141, 110, 99, 0);
-        }
-    }
-
-    /* Stagger animations for form elements */
-    form p:nth-child(1) { animation-delay: 0.1s; }
-    form p:nth-child(2) { animation-delay: 0.2s; }
-    form p:nth-child(3) { animation-delay: 0.3s; }
-    form p:nth-child(4) { animation-delay: 0.4s; }
-    form p:nth-child(5) { animation-delay: 0.5s; }
 </style>
 
-<!-- Particle Background Canvas -->
-<canvas class="particle-background" id="particleCanvas"></canvas>
+<!-- Particle Background -->
+<div id="particles-js"></div>
 
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
@@ -1125,383 +792,145 @@
     <input type="submit" name="submit">
 </form>
 
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Interactive Particle Background
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    // Mouse position tracking
-    let mouseX = canvas.width / 2;
-    let mouseY = canvas.height / 2;
-    
-    document.addEventListener('mousemove', function(event) {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    });
-    
-    // Brown-themed particle colors
-    const brownColors = [
-        'hsla(25, 75%, 35%, 0.7)',    // Darker brown
-        'hsla(25, 60%, 45%, 0.7)',     // Medium brown
-        'hsla(25, 50%, 60%, 0.7)',     // Light brown
-        'hsla(25, 40%, 70%, 0.7)'      // Very light brown
-    ];
-    
-    // Particle constructor
-    function Particle() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 5 + 2;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
-        this.color = brownColors[Math.floor(Math.random() * brownColors.length)];
-        this.angle = 0;
-        this.velocity = Math.random() * 0.02;
-        this.radius = Math.random() * 50 + 50;
-        this.distanceToMouse = 0;
-        this.affectedByMouse = false;
-    }
-    
-    // Update particle position
-    Particle.prototype.update = function() {
-        const dx = mouseX - this.x;
-        const dy = mouseY - this.y;
-        this.distanceToMouse = Math.sqrt(dx * dx + dy * dy);
-        
-        if (this.distanceToMouse < 150) {
-            this.affectedByMouse = true;
-            const forceDirectionX = dx / this.distanceToMouse;
-            const forceDirectionY = dy / this.distanceToMouse;
-            const force = (150 - this.distanceToMouse) / 150 * 2;
-            
-            this.x -= forceDirectionX * force;
-            this.y -= forceDirectionY * force;
-        } else {
-            this.affectedByMouse = false;
-            this.angle += this.velocity;
-            this.x += Math.cos(this.angle) * this.radius * 0.1 + this.speedX;
-            this.y += Math.sin(this.angle) * this.radius * 0.1 + this.speedY;
-        }
-        
-        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-    };
-    
-    // Draw particle
-    Particle.prototype.draw = function() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        
-        if (this.affectedByMouse) {
-            ctx.fillStyle = `hsla(25, 75%, 50%, 0.9)`;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = 'rgba(139, 69, 19, 0.7)';
-        } else {
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(139, 69, 19, 0.5)';
-        }
-        
-        ctx.fill();
-    };
-    
-    // Create particles
-    let particles = [];
-    const particleCount = window.innerWidth < 768 ? 80 : 150;
-    
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-    
-    // Animation loop
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw connecting lines
-        for (let a = 0; a < particles.length; a++) {
-            for (let b = a; b < particles.length; b++) {
-                const dx = particles[a].x - particles[b].x;
-                const dy = particles[a].y - particles[b].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `hsla(25, 60%, 50%, ${1 - distance/150})`;
-                    ctx.lineWidth = 0.8;
-                    ctx.moveTo(particles[a].x, particles[a].y);
-                    ctx.lineTo(particles[b].x, particles[b].y);
-                    ctx.stroke();
+    // Initialize particles.js with blue theme
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#3498db" // Blue color
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 2,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#3498db",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": true,
+                    "rotateX": 600,
+                    "rotateY": 1200
                 }
             }
-            particles[a].update();
-            particles[a].draw();
-        }
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    // Zoom and Pan Functionality
-    class ZoomSystem {
-        constructor(modalId) {
-            this.modalId = modalId;
-            this.currentScale = 1;
-            this.translateX = 0;
-            this.translateY = 0;
-            this.isDragging = false;
-            this.startX = 0;
-            this.startY = 0;
-            
-            this.container = document.querySelector(`#${modalId} .modal-image-content`);
-            if (!this.container) return;
-            
-            this.img = this.container.querySelector('.zoomable-image');
-            this.zoomInBtn = this.container.querySelector('.zoom-btn[title="Zoom In"]');
-            this.zoomOutBtn = this.container.querySelector('.zoom-btn[title="Zoom Out"]');
-            this.resetBtn = this.container.querySelector('.zoom-btn[title="Reset Zoom"]');
-            
-            this.initEvents();
-        }
-        
-        initEvents() {
-            if (!this.container) return;
-            
-            // Mouse events
-            this.container.addEventListener('mousedown', (e) => this.startDrag(e));
-            this.container.addEventListener('mousemove', (e) => this.drag(e));
-            this.container.addEventListener('mouseup', () => this.endDrag());
-            this.container.addEventListener('mouseleave', () => this.endDrag());
-            
-            // Touch events
-            this.container.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-            this.container.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-            this.container.addEventListener('touchend', () => this.endDrag());
-            
-            // Button events
-            if (this.zoomInBtn) {
-                this.zoomInBtn.addEventListener('click', () => this.zoomIn());
+        },
+        "interactivity": {
+            "detect_on": "window",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
             }
-            if (this.zoomOutBtn) {
-                this.zoomOutBtn.addEventListener('click', () => this.zoomOut());
-            }
-            if (this.resetBtn) {
-                this.resetBtn.addEventListener('click', () => this.resetZoom());
-            }
-            
-            // Double click to reset
-            this.container.addEventListener('dblclick', () => this.resetZoom());
-        }
-        
-        zoomIn() {
-            this.currentScale *= 1.5;
-            this.applyTransform();
-            this.container.classList.add('zoomed');
-        }
-        
-        zoomOut() {
-            this.currentScale /= 1.5;
-            if (this.currentScale <= 1) {
-                this.resetZoom();
-                return;
-            }
-            this.applyTransform();
-        }
-        
-        resetZoom() {
-            this.currentScale = 1;
-            this.translateX = 0;
-            this.translateY = 0;
-            this.applyTransform();
-            this.container.classList.remove('zoomed');
-        }
-        
-        applyTransform() {
-            if (this.img) {
-                this.img.style.transform = `matrix(${this.currentScale}, 0, 0, ${this.currentScale}, ${this.translateX}, ${this.translateY})`;
-            }
-        }
-        
-        startDrag(e) {
-            if (!this.container.classList.contains('zoomed')) return;
-            
-            this.isDragging = true;
-            this.startX = e.clientX || e.touches[0].clientX;
-            this.startY = e.clientY || e.touches[0].clientY;
-            this.container.style.cursor = 'grabbing';
-            e.preventDefault();
-        }
-        
-        drag(e) {
-            if (!this.isDragging) return;
-            
-            const currentX = e.clientX || e.touches[0].clientX;
-            const currentY = e.clientY || e.touches[0].clientY;
-            
-            this.translateX += (currentX - this.startX);
-            this.translateY += (currentY - this.startY);
-            
-            this.startX = currentX;
-            this.startY = currentY;
-            
-            this.applyTransform();
-            e.preventDefault();
-        }
-        
-        endDrag() {
-            this.isDragging = false;
-            if (this.container) {
-                this.container.style.cursor = 'grab';
-            }
-        }
-        
-        handleTouchStart(e) {
-            if (e.touches.length === 1) {
-                this.startDrag(e);
-            }
-        }
-        
-        handleTouchMove(e) {
-            if (e.touches.length === 1) {
-                this.drag(e);
-            }
-        }
-    }
-
-    // Initialize zoom systems for each modal
-    const zoomSystems = new Map();
-    document.querySelectorAll('.modal').forEach(modal => {
-        const modalId = modal.id;
-        if (modal.querySelector('.modal-image-content')) {
-            zoomSystems.set(modalId, new ZoomSystem(modalId));
-        }
-    });
-
-    // Fix for backdrop remaining after closing modal
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('hidden.bs.modal', function() {
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(backdrop => backdrop.remove());
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = 'auto';
-            document.body.style.paddingRight = '0';
-            
-            // Reset zoom state when modal closes
-            const zoomSystem = zoomSystems.get(modal.id);
-            if (zoomSystem) {
-                zoomSystem.resetZoom();
-            }
-        });
-    });
-
-    // Fix for contact modal transition
-    document.querySelectorAll('[data-bs-target^="#contactModal"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const circularModal = this.closest('.modal');
-            if (circularModal) {
-                const modalInstance = bootstrap.Modal.getInstance(circularModal);
-                modalInstance.hide();
-            }
-        });
-    });
-
-    // Show messages as toasts
-    {% if messages %}
-        {% for message in messages %}
-            showToast('{{ message.tags }}', '{{ message }}');
-        {% endfor %}
-    {% endif %}
-});
-
-function showToast(type, message) {
-    const toastContainer = document.createElement('div');
-    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    toastContainer.style.zIndex = '1100';
-    
-    const toast = document.createElement('div');
-    toast.className = `toast show align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
-    toast.role = 'alert';
-    toast.ariaLive = 'assertive';
-    toast.ariaAtomic = 'true';
-    
-    const toastBody = document.createElement('div');
-    toastBody.className = 'd-flex';
-    
-    const toastMessage = document.createElement('div');
-    toastMessage.className = 'toast-body';
-    toastMessage.textContent = message;
-    
-    const closeButton = document.createElement('button');
-    closeButton.type = 'button';
-    closeButton.className = 'btn-close btn-close-white me-2 m-auto';
-    closeButton.setAttribute('data-bs-dismiss', 'toast');
-    closeButton.ariaLabel = 'Close';
-    
-    toastBody.appendChild(toastMessage);
-    toastBody.appendChild(closeButton);
-    toast.appendChild(toastBody);
-    toastContainer.appendChild(toast);
-    
-    document.body.appendChild(toastContainer);
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toastContainer.remove();
-        }, 300);
-    }, 5000);
-}
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize modal animations
-    const updateModals = document.querySelectorAll('.update-modal');
-    
-    updateModals.forEach(modal => {
-        modal.addEventListener('show.bs.modal', function() {
-            const modalContent = this.querySelector('.modal-content');
-            const animatedElements = this.querySelectorAll('.animate__animated');
-            
-            // Reset animations
-            animatedElements.forEach(el => {
-                el.style.animation = 'none';
-                void el.offsetWidth; // Trigger reflow
-                el.style.animation = '';
-            });
-            
-            // Ensure modal content is visible
-            modalContent.style.opacity = '1';
-        });
-        
-        modal.addEventListener('hidden.bs.modal', function() {
-            const animatedElements = this.querySelectorAll('.animate__animated');
-            animatedElements.forEach(el => {
-                el.style.animation = 'none';
-                el.style.opacity = '0';
-            });
-        });
+        },
+        "retina_detect": true
     });
     
-    // Add hover effect to submit button
-    const submitButtons = document.querySelectorAll('.modal-footer .btn-primary');
-    submitButtons.forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.classList.add('animate__pulse');
-        });
-        btn.addEventListener('mouseleave', function() {
-            this.classList.remove('animate__pulse');
-        });
+    // Add custom mouse interaction for stronger particle attraction
+    document.addEventListener('mousemove', function(e) {
+        if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
+            // Get the mouse position
+            var mouseX = e.clientX;
+            var mouseY = e.clientY;
+            
+            // Get all particles
+            var particles = particlesJS.particles.array;
+            
+            // Attract particles to mouse position
+            for (var i = 0; i < particles.length; i++) {
+                var particle = particles[i];
+                var dx = mouseX - particle.x;
+                var dy = mouseY - particle.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Only affect particles within a certain distance
+                if (distance < 200) {
+                    var forceDirectionX = dx / distance;
+                    var forceDirectionY = dy / distance;
+                    var force = (200 - distance) / 200 * 3; // Stronger when closer
+                    
+                    // Apply force to particle velocity
+                    particle.vx = forceDirectionX * force;
+                    particle.vy = forceDirectionY * force;
+                }
+            }
+        }
     });
 });
-
 </script>
 
 {% endblock %}
