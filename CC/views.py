@@ -241,7 +241,7 @@ def search_results(request):
             Q(rank__icontains=query) |
             Q(department__icontains=query) |
             Q(contact__icontains=query)
-        ).distinct()
+        ).distinct().prefetch_related('images')
         
         # Search across all relevant fields in Circular
         circular_results = Circular.objects.filter(
@@ -254,10 +254,14 @@ def search_results(request):
         institute_results = InstituteInfo.objects.none()
         circular_results = Circular.objects.none()
     
+    # Get all categories for the filter
+    categories = Category.objects.all()
+    
     context = {
         'query': query,
         'institute_results': institute_results,
         'circular_results': circular_results,
+        'categories': categories,
         'results_count': institute_results.count() + circular_results.count()
     }
     

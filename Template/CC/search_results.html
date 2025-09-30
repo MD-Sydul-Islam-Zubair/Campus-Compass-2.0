@@ -12,12 +12,15 @@
         --primary-blue: #2c3e50;
         --secondary-blue: #3498db;
         --light-blue: #98c1ff;
+        --lighter-blue: #e2edff;
         --card-bg: rgba(255, 255, 255, 0.95);
         --card-border: rgba(44, 62, 80, 0.2);
         --text-dark: #2c3e50;
         --text-light: #7f8c8d;
         --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
         --shadow-hover: 0 12px 30px rgba(44, 62, 80, 0.2);
+        --apply-color: #27ae60;
+        --closed-color: #e74c3c;
     }
 
     body {
@@ -36,6 +39,151 @@
         left: 0;
         z-index: -1;
         background-color: white;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: var(--lighter-blue);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+    }
+
+    .filter-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1.5rem;
+        color: var(--primary-blue);
+    }
+
+    .filter-header h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .filter-header i {
+        font-size: 1.5rem;
+        color: var(--secondary-blue);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.85rem;
+    }
+
+    .filter-select, .filter-input {
+        padding: 0.6rem 0.8rem;
+        border: 1px solid var(--card-border);
+        border-radius: 6px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.85rem;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .filter-select:focus, .filter-input:focus {
+        border-color: var(--primary-blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.2);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.85rem;
+    }
+
+    .filter-apply {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+    }
+
+    .filter-apply:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
+    }
+
+    .filter-reset {
+        background: #f8f9fa;
+        color: var(--text-dark);
+        border: 1px solid var(--card-border);
+    }
+
+    .filter-reset:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    /* Results Summary */
+    .results-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0 0.5rem;
+    }
+
+    .results-count {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .active-filters {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-tag {
+        background: var(--lighter-blue);
+        color: var(--primary-blue);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid var(--card-border);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .filter-tag-remove {
+        background: none;
+        border: none;
+        color: var(--closed-color);
+        cursor: pointer;
+        font-size: 0.7rem;
     }
 
     /* Search Header */
@@ -100,11 +248,25 @@
         font-size: 1.25rem;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+    }
+
+    .section-header-left {
+        display: flex;
+        align-items: center;
     }
 
     .section-header i {
         margin-right: 10px;
         font-size: 1.5rem;
+    }
+
+    .results-count-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
     }
 
     /* Result Cards */
@@ -117,6 +279,8 @@
         position: relative;
         background: var(--card-bg);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
     }
 
     .result-card:hover {
@@ -124,8 +288,15 @@
         box-shadow: 0 12px 25px rgba(44, 62, 80, 0.15);
     }
 
-    .result-card img {
+    .card-img-container {
+        position: relative;
         height: 200px;
+        overflow: hidden;
+    }
+
+    .result-card img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
@@ -134,20 +305,73 @@
         transform: scale(1.03);
     }
 
+    .status-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        z-index: 2;
+    }
+
+    .status-apply {
+        background: var(--apply-color);
+        color: white;
+    }
+
+    .status-closed {
+        background: var(--closed-color);
+        color: white;
+    }
+
     .card-body {
         padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
     }
 
     .card-title {
         color: var(--text-dark);
         font-weight: 600;
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+        font-size: 1.1rem;
     }
 
     .card-text {
         color: var(--text-light);
         font-size: 0.9rem;
         margin-bottom: 1.5rem;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.8rem;
+        color: var(--text-light);
+    }
+
+    .meta-item i {
+        font-size: 0.7rem;
+        color: var(--secondary-blue);
+    }
+
+    .card-actions {
+        margin-top: auto;
     }
 
     /* Buttons */
@@ -155,12 +379,17 @@
         background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         border: none;
-        padding: 0.5rem 1.5rem;
+        padding: 0.6rem 1.5rem;
         border-radius: 50px;
         font-weight: 500;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        font-size: 0.9rem;
     }
 
     .btn-view:hover {
@@ -233,43 +462,209 @@
         position: relative;
         z-index: 10;
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-actions {
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            width: 100%;
+        }
+        
+        .results-summary {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .card-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .search-header {
+            padding: 1.5rem;
+        }
+        
+        .filter-section {
+            padding: 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .btn-view {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Ensure consistent card heights */
+    .card-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-text-wrapper {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
 </style>
 
 <!-- Particle Background -->
 <div id="particles-js"></div>
 
 <div class="container mt-4">
+    <!-- Search Header -->
     <div class="search-header animate__animated animate__fadeIn">
         <h2 class="mb-2"><i class="fas fa-search"></i> Search Results for "{{ query }}"</h2>
         <p class="mb-0">{{ results_count }} result(s) found</p>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section animate__animated animate__fadeIn">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i>
+            <h3>Filter Results</h3>
+        </div>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label class="filter-label">Type</label>
+                <select class="filter-select" id="filter-type">
+                    <option value="">All Types</option>
+                    <option value="institute">Institutions</option>
+                    <option value="circular">Circulars</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Category</label>
+                <select class="filter-select" id="filter-category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select class="filter-select" id="filter-status">
+                    <option value="">All Status</option>
+                    <option value="Apply">Apply</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <input type="text" class="filter-input" id="filter-location" placeholder="Enter location...">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="filter-btn filter-reset" id="filter-reset">
+                <i class="fas fa-redo"></i> Reset Filters
+            </button>
+            <button class="filter-btn filter-apply" id="filter-apply">
+                <i class="fas fa-check"></i> Apply Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary animate__animated animate__fadeIn">
+        <div class="results-count" id="filtered-results-count">
+            Showing {{ results_count }} result(s)
+        </div>
+        <div class="active-filters" id="active-filters">
+            <!-- Active filters will appear here -->
+        </div>
     </div>
     
     {% if results_count > 0 %}
         <!-- Institute Results -->
         {% if institute_results %}
-            <div class="results-container animate__animated animate__fadeInUp mb-4">
+            <div class="results-container animate__animated animate__fadeInUp mb-4" id="institute-results">
                 <div class="section-header">
-                    <i class="fas fa-university"></i>
-                    <h4 class="mb-0">Institutions</h4>
+                    <div class="section-header-left">
+                        <i class="fas fa-university"></i>
+                        <h4 class="mb-0">Institutions</h4>
+                        <span class="results-count-badge" id="institute-count">{{ institute_results.count }}</span>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row" id="institute-cards">
                         {% for institute in institute_results %}
-                            <div class="col-md-4 mb-4 animate-card" style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
+                            <div class="col-md-4 mb-4 animate-card institute-card" 
+                                 data-category="{{ institute.category.name }}"
+                                 data-status="{{ institute.status }}"
+                                 data-location="{{ institute.location }}"
+                                 style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
                                 <div class="result-card h-100">
-                                    {% if institute.images.first %}
-                                        <img src="{{ institute.images.first.image.url }}" class="card-img-top" alt="{{ institute.title }}">
-                                    {% else %}
-                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                            <i class="fas fa-university fa-4x text-muted"></i>
-                                        </div>
-                                    {% endif %}
+                                    <div class="card-img-container">
+                                        {% if institute.images.first %}
+                                            <img src="{{ institute.images.first.image.url }}" class="card-img-top" alt="{{ institute.title }}">
+                                        {% else %}
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                <i class="fas fa-university fa-4x text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <span class="status-badge status-{{ institute.status|lower }}">
+                                            {{ institute.status }}
+                                        </span>
+                                    </div>
                                     <div class="card-body">
-                                        <h5 class="card-title">{{ institute.title }}</h5>
-                                        <p class="card-text">{{ institute.description|truncatewords:30 }}</p>
-                                        <a href="{% url 'institute_detail' institute.id %}" class="btn btn-view">
-                                            <i class="fas fa-eye mr-1"></i> View Details
-                                        </a>
+                                        <div class="card-content-wrapper">
+                                            <h5 class="card-title">{{ institute.title }}</h5>
+                                            
+                                            <div class="card-text-wrapper">
+                                                <p class="card-text">{{ institute.description|truncatewords:30 }}</p>
+                                                
+                                                <div class="card-meta">
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-map-marker-alt"></i>
+                                                        {{ institute.location }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-tag"></i>
+                                                        {{ institute.category.name }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-trophy"></i>
+                                                        {{ institute.rank }}
+                                                    </span>
+                                                    {% if institute.department %}
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-graduation-cap"></i>
+                                                        {{ institute.department|truncatewords:3 }}
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-actions">
+                                                <a href="{% url 'institute_detail' institute.id %}" class="btn btn-view">
+                                                    <i class="fas fa-eye mr-1"></i> View Details
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -281,29 +676,60 @@
         
         <!-- Circular Results -->
         {% if circular_results %}
-            <div class="results-container animate__animated animate__fadeInUp">
+            <div class="results-container animate__animated animate__fadeInUp" id="circular-results">
                 <div class="section-header">
-                    <i class="fas fa-file-alt"></i>
-                    <h4 class="mb-0">Circulars</h4>
+                    <div class="section-header-left">
+                        <i class="fas fa-file-alt"></i>
+                        <h4 class="mb-0">Circulars</h4>
+                        <span class="results-count-badge" id="circular-count">{{ circular_results.count }}</span>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row" id="circular-cards">
                         {% for circular in circular_results %}
-                            <div class="col-md-4 mb-4 animate-card" style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
+                            <div class="col-md-4 mb-4 animate-card circular-card" 
+                                 data-admission-period="{{ circular.admission_period }}"
+                                 data-programs="{{ circular.programs }}"
+                                 style="animation-delay: {{ forloop.counter0|add:"1"|divisibleby:"3"|yesno:"0.2s,0.4s,0.6s" }}">
                                 <div class="result-card h-100">
-                                    {% if circular.image %}
-                                        <img src="{{ circular.image.url }}" class="card-img-top" alt="{{ circular.title }}">
-                                    {% else %}
-                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                            <i class="fas fa-file-alt fa-4x text-muted"></i>
-                                        </div>
-                                    {% endif %}
+                                    <div class="card-img-container">
+                                        {% if circular.image %}
+                                            <img src="{{ circular.image.url }}" class="card-img-top" alt="{{ circular.title }}">
+                                        {% else %}
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                <i class="fas fa-file-alt fa-4x text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                     <div class="card-body">
-                                        <h5 class="card-title">{{ circular.title }}</h5>
-                                        <p class="card-text">{{ circular.details|truncatewords:30 }}</p>
-                                        <a href="#" class="btn btn-view">
-                                            <i class="fas fa-external-link-alt mr-1"></i> View Circular
-                                        </a>
+                                        <div class="card-content-wrapper">
+                                            <h5 class="card-title">{{ circular.title }}</h5>
+                                            
+                                            <div class="card-text-wrapper">
+                                                <p class="card-text">{{ circular.details|truncatewords:30 }}</p>
+                                                
+                                                <div class="card-meta">
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        {{ circular.admission_period }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-graduation-cap"></i>
+                                                        {{ circular.programs }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-clock"></i>
+                                                        {{ circular.published_date|date:"M d, Y" }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-actions">
+                                                <a href="#" class="btn btn-view">
+                                                    <i class="fas fa-external-link-alt mr-1"></i> View Circular
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -431,7 +857,156 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         "retina_detect": true
     });
-    
+
+    // Filter functionality
+    const filterType = document.getElementById('filter-type');
+    const filterCategory = document.getElementById('filter-category');
+    const filterStatus = document.getElementById('filter-status');
+    const filterLocation = document.getElementById('filter-location');
+    const filterApply = document.getElementById('filter-apply');
+    const filterReset = document.getElementById('filter-reset');
+    const filteredResultsCount = document.getElementById('filtered-results-count');
+    const activeFilters = document.getElementById('active-filters');
+    const instituteCards = document.querySelectorAll('.institute-card');
+    const circularCards = document.querySelectorAll('.circular-card');
+    const instituteCount = document.getElementById('institute-count');
+    const circularCount = document.getElementById('circular-count');
+
+    let activeFilterTags = [];
+
+    function applyFilters() {
+        const type = filterType.value;
+        const category = filterCategory.value.toLowerCase();
+        const status = filterStatus.value;
+        const location = filterLocation.value.toLowerCase();
+
+        // Update active filters display
+        updateActiveFilters(type, category, status, location);
+
+        let visibleInstituteCount = 0;
+        let visibleCircularCount = 0;
+
+        // Filter institute cards
+        instituteCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category').toLowerCase();
+            const cardStatus = card.getAttribute('data-status');
+            const cardLocation = card.getAttribute('data-location').toLowerCase();
+
+            const matchesType = !type || type === 'institute';
+            const matchesCategory = !category || cardCategory.includes(category);
+            const matchesStatus = !status || cardStatus === status;
+            const matchesLocation = !location || cardLocation.includes(location);
+
+            const isVisible = matchesType && matchesCategory && matchesStatus && matchesLocation;
+
+            if (isVisible) {
+                card.style.display = 'block';
+                visibleInstituteCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Filter circular cards
+        circularCards.forEach(card => {
+            const cardAdmissionPeriod = card.getAttribute('data-admission-period').toLowerCase();
+            const cardPrograms = card.getAttribute('data-programs').toLowerCase();
+
+            const matchesType = !type || type === 'circular';
+            const matchesAdmissionPeriod = !location || cardAdmissionPeriod.includes(location) || cardPrograms.includes(location);
+
+            const isVisible = matchesType && matchesAdmissionPeriod;
+
+            if (isVisible) {
+                card.style.display = 'block';
+                visibleCircularCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Update counts
+        instituteCount.textContent = visibleInstituteCount;
+        circularCount.textContent = visibleCircularCount;
+        
+        const totalVisible = visibleInstituteCount + visibleCircularCount;
+        filteredResultsCount.textContent = `Showing ${totalVisible} result(s)`;
+
+        // Show/hide sections based on visibility
+        document.getElementById('institute-results').style.display = visibleInstituteCount > 0 ? 'block' : 'none';
+        document.getElementById('circular-results').style.display = visibleCircularCount > 0 ? 'block' : 'none';
+    }
+
+    function updateActiveFilters(type, category, status, location) {
+        activeFilterTags = [];
+        
+        if (type) {
+            activeFilterTags.push({ key: 'type', value: type, label: `Type: ${type === 'institute' ? 'Institutions' : 'Circulars'}` });
+        }
+        if (category) {
+            activeFilterTags.push({ key: 'category', value: category, label: `Category: ${category}` });
+        }
+        if (status) {
+            activeFilterTags.push({ key: 'status', value: status, label: `Status: ${status}` });
+        }
+        if (location) {
+            activeFilterTags.push({ key: 'location', value: location, label: `Location: ${location}` });
+        }
+
+        // Update active filters display
+        activeFilters.innerHTML = activeFilterTags.map(tag => `
+            <div class="filter-tag">
+                ${tag.label}
+                <button class="filter-tag-remove" data-key="${tag.key}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `).join('');
+
+        // Add event listeners to remove buttons
+        document.querySelectorAll('.filter-tag-remove').forEach(button => {
+            button.addEventListener('click', function() {
+                const key = this.getAttribute('data-key');
+                removeFilter(key);
+            });
+        });
+    }
+
+    function removeFilter(key) {
+        switch(key) {
+            case 'type':
+                filterType.value = '';
+                break;
+            case 'category':
+                filterCategory.value = '';
+                break;
+            case 'status':
+                filterStatus.value = '';
+                break;
+            case 'location':
+                filterLocation.value = '';
+                break;
+        }
+        applyFilters();
+    }
+
+    function resetFilters() {
+        filterType.value = '';
+        filterCategory.value = '';
+        filterStatus.value = '';
+        filterLocation.value = '';
+        activeFilterTags = [];
+        activeFilters.innerHTML = '';
+        applyFilters();
+    }
+
+    // Event listeners
+    filterApply.addEventListener('click', applyFilters);
+    filterReset.addEventListener('click', resetFilters);
+
+    // Initialize filters
+    applyFilters();
+
     // Add custom mouse interaction for stronger particle attraction
     document.addEventListener('mousemove', function(e) {
         if (typeof particlesJS !== 'undefined' && particlesJS.particles && particlesJS.particles.array) {
