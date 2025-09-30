@@ -97,6 +97,109 @@
         margin: 0 auto;
     }
 
+    /* Filter Section */
+    .filter-section {
+        background: var(--lighter-blue);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+    }
+
+    .filter-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1.5rem;
+        color: var(--primary-blue);
+    }
+
+    .filter-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .filter-header i {
+        font-size: 1.8rem;
+        color: var(--secondary-blue);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.9rem;
+    }
+
+    .filter-select, .filter-input {
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .filter-select:focus, .filter-input:focus {
+        border-color: var(--primary-blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.2);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .filter-apply {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+    }
+
+    .filter-apply:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(26, 58, 143, 0.3);
+    }
+
+    .filter-reset {
+        background: #f8f9fa;
+        color: var(--text-dark);
+        border: 1px solid var(--card-border);
+    }
+
+    .filter-reset:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
     /* Search Section */
     .search-section {
         display: grid;
@@ -602,6 +705,10 @@
         .institute-card {
             min-height: auto;
         }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     @media (max-width: 768px) {
@@ -626,6 +733,14 @@
 
         .institute-title {
             font-size: 1.5rem;
+        }
+
+        .filter-actions {
+            justify-content: center;
+        }
+
+        .filter-btn {
+            width: 100%;
         }
     }
 
@@ -655,6 +770,52 @@
     <div class="page-header">
         <h1 class="page-title">Institute Comparison</h1>
         <p class="page-subtitle">Search and compare two institutes side by side to make an informed decision</p>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i>
+            <h3>Filter Institutes</h3>
+        </div>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label class="filter-label">Category</label>
+                <select class="filter-select" id="filter-category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select class="filter-select" id="filter-status">
+                    <option value="">All Status</option>
+                    <option value="Apply">Apply</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <input type="text" class="filter-input" id="filter-location" placeholder="Enter location...">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Department</label>
+                <input type="text" class="filter-input" id="filter-department" placeholder="Enter department...">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="filter-btn filter-reset" id="filter-reset">
+                <i class="fas fa-redo"></i> Reset Filters
+            </button>
+            <button class="filter-btn filter-apply" id="filter-apply">
+                <i class="fas fa-check"></i> Apply Filters
+            </button>
+        </div>
     </div>
     
     <!-- Search Section -->
@@ -852,6 +1013,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Global variables
     let allInstitutes = [];
+    let filteredInstitutes = [];
     let selectedInstitute1 = null;
     let selectedInstitute2 = null;
 
@@ -868,6 +1030,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const instituteCard1 = document.getElementById('institute-card-1');
     const instituteCard2 = document.getElementById('institute-card-2');
     const comparisonTable = document.getElementById('comparison-table');
+    
+    // Filter elements
+    const filterCategory = document.getElementById('filter-category');
+    const filterStatus = document.getElementById('filter-status');
+    const filterLocation = document.getElementById('filter-location');
+    const filterDepartment = document.getElementById('filter-department');
+    const filterApply = document.getElementById('filter-apply');
+    const filterReset = document.getElementById('filter-reset');
 
     // Initialize institutes data from Django template
     function initializeInstitutesData() {
@@ -889,6 +1059,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         ];
+        filteredInstitutes = [...allInstitutes];
+    }
+
+    // Filter functionality
+    function applyFilters() {
+        const category = filterCategory.value.toLowerCase();
+        const status = filterStatus.value;
+        const location = filterLocation.value.toLowerCase();
+        const department = filterDepartment.value.toLowerCase();
+
+        filteredInstitutes = allInstitutes.filter(institute => {
+            const matchesCategory = !category || institute.category.toLowerCase().includes(category);
+            const matchesStatus = !status || institute.status === status;
+            const matchesLocation = !location || institute.location.toLowerCase().includes(location);
+            const matchesDepartment = !department || institute.department.toLowerCase().includes(department);
+
+            return matchesCategory && matchesStatus && matchesLocation && matchesDepartment;
+        });
+
+        // Clear current selections if they don't match filters
+        if (selectedInstitute1 && !filteredInstitutes.find(inst => inst.id === selectedInstitute1.id)) {
+            selectedInstitute1 = null;
+            selected1.style.display = 'none';
+        }
+        if (selectedInstitute2 && !filteredInstitutes.find(inst => inst.id === selectedInstitute2.id)) {
+            selectedInstitute2 = null;
+            selected2.style.display = 'none';
+        }
+
+        updateCompareButton();
+    }
+
+    function resetFilters() {
+        filterCategory.value = '';
+        filterStatus.value = '';
+        filterLocation.value = '';
+        filterDepartment.value = '';
+        filteredInstitutes = [...allInstitutes];
     }
 
     // Search functionality
@@ -900,13 +1108,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const filteredInstitutes = allInstitutes.filter(institute => 
+            const searchResults = filteredInstitutes.filter(institute => 
                 institute.title.toLowerCase().includes(query) || 
                 institute.category.toLowerCase().includes(query) ||
                 institute.location.toLowerCase().includes(query)
             );
 
-            displaySuggestions(filteredInstitutes, suggestionsElement, selectedElement, instituteNumber);
+            displaySuggestions(searchResults, suggestionsElement, selectedElement, instituteNumber);
         });
 
         // Hide suggestions when clicking outside
@@ -932,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             suggestionsElement.querySelectorAll('.suggestion-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const instituteId = parseInt(this.getAttribute('data-id'));
-                    const institute = allInstitutes.find(inst => inst.id === instituteId);
+                    const institute = filteredInstitutes.find(inst => inst.id === instituteId);
                     selectInstitute(institute, selectedElement, instituteNumber);
                     suggestionsElement.style.display = 'none';
                     inputElement.value = '';
@@ -1127,6 +1335,13 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput1.value = '';
         searchInput2.value = '';
         updateCompareButton();
+    });
+
+    // Filter event listeners
+    filterApply.addEventListener('click', applyFilters);
+    filterReset.addEventListener('click', function() {
+        resetFilters();
+        applyFilters();
     });
 
     // Initialize the page

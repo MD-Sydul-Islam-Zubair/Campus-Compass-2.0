@@ -309,8 +309,10 @@ def upload_circular(request):
 def institute_comparison(request):
     # Get all institutes for the search functionality
     all_institutes = InstituteInfo.objects.all().prefetch_related('images')
+    categories = Category.objects.all()
     
     context = {
         'all_institutes': all_institutes,
+        'categories': categories,
     }
     return render(request, 'CC/Comparison.html', context)
