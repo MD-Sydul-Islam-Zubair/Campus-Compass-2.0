@@ -1,0 +1,1149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        /* Blue Theme Color Variables */
+        --primary-blue: #1a3a8f;
+        --secondary-blue: #3a6fd9;
+        --light-blue: #98c1ff;
+        --lighter-blue: #e2edff;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(26, 58, 143, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(26, 58, 143, 0.2);
+        --apply-color: #27ae60;
+        --closed-color: #e74c3c;
+        --institute-1-color: #3498db;
+        --institute-2-color: #9b59b6;
+    }
+
+    /* Base Styles */
+    body {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--text-dark);
+        overflow-x: hidden;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Particle Background Canvas */
+    #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        background-color: white;
+    }
+
+    /* Main Container */
+    .comparison-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.3s forwards;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Page Header */
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--primary-blue);
+        position: relative;
+        display: inline-block;
+    }
+
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+        border-radius: 2px;
+    }
+
+    .page-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Search Section */
+    .search-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .search-box {
+        background: var(--lighter-blue);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transition: all 0.3s ease;
+    }
+
+    .search-box:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .search-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1.5rem;
+        color: var(--primary-blue);
+    }
+
+    .search-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .search-header i {
+        font-size: 1.8rem;
+        color: var(--secondary-blue);
+    }
+
+    .search-input-container {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+    }
+
+    .suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-light);
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+        border: 1px solid var(--card-border);
+    }
+
+    .suggestion-item {
+        padding: 0.8rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f1f1;
+        transition: background 0.2s ease;
+    }
+
+    .suggestion-item:hover {
+        background: var(--lighter-blue);
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .selected-institute {
+        background: var(--lighter-blue);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        display: none;
+        animation: fadeIn 0.5s ease;
+        border-left: 4px solid var(--primary-blue);
+    }
+
+    .selected-institute h4 {
+        margin-bottom: 0.5rem;
+        color: var(--primary-blue);
+    }
+
+    .selected-institute p {
+        margin: 0.3rem 0;
+        color: var(--text-dark);
+    }
+
+    .remove-btn {
+        background: none;
+        border: none;
+        color: var(--closed-color);
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 3rem 0;
+        padding: 2rem 0;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        border: none;
+        font-size: 1rem;
+    }
+
+    .compare-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+    }
+
+    .compare-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(26, 58, 143, 0.4);
+    }
+
+    .reset-btn {
+        background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+        color: white;
+    }
+
+    .reset-btn:hover {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(127, 140, 141, 0.4);
+    }
+
+    /* Comparison Section */
+    .comparison-section {
+        display: none;
+        animation: fadeIn 0.8s ease;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .comparison-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .institute-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: all 0.3s ease;
+        border-top: 5px solid;
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+        min-height: 750px;
+    }
+
+    .institute-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .institute-1 {
+        border-top-color: var(--institute-1-color);
+    }
+
+    .institute-2 {
+        border-top-color: var(--institute-2-color);
+    }
+
+    .institute-header {
+        padding: 1.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .institute-1 .institute-header {
+        background: linear-gradient(135deg, var(--institute-1-color), #2980b9);
+    }
+
+    .institute-2 .institute-header {
+        background: linear-gradient(135deg, var(--institute-2-color), #8e44ad);
+    }
+
+    .institute-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+
+    .institute-category {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .institute-status {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .status-apply {
+        background: var(--apply-color);
+    }
+
+    .status-closed {
+        background: var(--closed-color);
+    }
+
+    .institute-body {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .institute-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        flex-shrink: 0;
+    }
+
+    .institute-details {
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        flex: 1;
+    }
+
+    .detail-value {
+        color: var(--text-light);
+        text-align: right;
+        flex: 1;
+        max-width: 60%;
+    }
+
+    .description-text {
+        max-height: 80px;
+        overflow: hidden;
+        position: relative;
+        line-height: 1.4;
+    }
+
+    .description-text:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: linear-gradient(transparent, white);
+    }
+
+    .view-more-btn {
+        display: block;
+        width: 100%;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        margin-top: auto;
+        flex-shrink: 0;
+    }
+
+    .view-more-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(26, 58, 143, 0.4);
+    }
+
+    /* Comparison Table */
+    .comparison-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        margin-top: 2rem;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .table-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .table-body {
+        padding: 0;
+    }
+
+    .comparison-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .comparison-row:last-child {
+        border-bottom: none;
+    }
+
+    .criteria {
+        padding: 1.5rem;
+        background: var(--lighter-blue);
+        font-weight: 600;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+    }
+
+    .institute-value {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .winner {
+        background: rgba(39, 174, 96, 0.1);
+        position: relative;
+    }
+
+    .winner:after {
+        content: '✓';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: var(--apply-color);
+        font-weight: bold;
+    }
+
+    /* Back Button */
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-top: 2rem;
+        box-shadow: 0 5px 15px rgba(26, 58, 143, 0.3);
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(26, 58, 143, 0.4);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-blue);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .search-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .comparison-header {
+            grid-template-columns: 1fr;
+        }
+        
+        .comparison-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .criteria {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .institute-card {
+            min-height: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .comparison-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .action-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .institute-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .detail-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .detail-value {
+            max-width: 100%;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .description-text {
+            max-height: 60px;
+        }
+    }
+</style>
+
+<!-- Particle Background -->
+<div id="particles-js"></div>
+
+<div class="comparison-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Institute Comparison</h1>
+        <p class="page-subtitle">Search and compare two institutes side by side to make an informed decision</p>
+    </div>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+        <!-- Institute 1 Search -->
+        <div class="search-box">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <h3>Search First Institute</h3>
+            </div>
+            <div class="search-input-container">
+                <input type="text" class="search-input" id="search-input-1" placeholder="Type to search institutes...">
+                <i class="fas fa-search search-icon"></i>
+                <div class="suggestions" id="suggestions-1"></div>
+            </div>
+            <div class="selected-institute" id="selected-1">
+                <!-- Selected institute will appear here -->
+            </div>
+        </div>
+        
+        <!-- Institute 2 Search -->
+        <div class="search-box">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <h3>Search Second Institute</h3>
+            </div>
+            <div class="search-input-container">
+                <input type="text" class="search-input" id="search-input-2" placeholder="Type to search institutes...">
+                <i class="fas fa-search search-icon"></i>
+                <div class="suggestions" id="suggestions-2"></div>
+            </div>
+            <div class="selected-institute" id="selected-2">
+                <!-- Selected institute will appear here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="action-btn compare-btn" id="compare-btn">
+            <i class="fas fa-balance-scale"></i> Compare Institutes
+        </button>
+        <button class="action-btn reset-btn" id="reset-btn">
+            <i class="fas fa-redo"></i> Reset Selection
+        </button>
+    </div>
+    
+    <!-- Comparison Section -->
+    <div class="comparison-section" id="comparison-section">
+        <!-- Institute Cards -->
+        <div class="comparison-header">
+            <div class="institute-card institute-1" id="institute-card-1">
+                <!-- Institute 1 details will be populated here -->
+            </div>
+            <div class="institute-card institute-2" id="institute-card-2">
+                <!-- Institute 2 details will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Comparison Table -->
+        <div class="comparison-table">
+            <div class="table-header">
+                <h3>Detailed Comparison</h3>
+            </div>
+            <div class="table-body" id="comparison-table">
+                <!-- Comparison rows will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Back Button -->
+    <div class="text-center">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Previous Page
+        </a>
+    </div>
+</div>
+
+<!-- Hidden data container for Django template variables -->
+<div id="institute-data" 
+     data-institute-detail-url="{% url 'institute_detail' 0 %}"
+     style="display: none;">
+</div>
+
+<!-- Particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize particles.js with blue theme
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 80,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#3498db" // Blue color
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 2,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#3498db",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": true,
+                    "rotateX": 600,
+                    "rotateY": 1200
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "window",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+    });
+
+    // Get URLs from Django template
+    const instituteDetailUrl = document.getElementById('institute-data').getAttribute('data-institute-detail-url');
+    
+    // Global variables
+    let allInstitutes = [];
+    let selectedInstitute1 = null;
+    let selectedInstitute2 = null;
+
+    // DOM Elements
+    const searchInput1 = document.getElementById('search-input-1');
+    const searchInput2 = document.getElementById('search-input-2');
+    const suggestions1 = document.getElementById('suggestions-1');
+    const suggestions2 = document.getElementById('suggestions-2');
+    const selected1 = document.getElementById('selected-1');
+    const selected2 = document.getElementById('selected-2');
+    const compareBtn = document.getElementById('compare-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const comparisonSection = document.getElementById('comparison-section');
+    const instituteCard1 = document.getElementById('institute-card-1');
+    const instituteCard2 = document.getElementById('institute-card-2');
+    const comparisonTable = document.getElementById('comparison-table');
+
+    // Initialize institutes data from Django template
+    function initializeInstitutesData() {
+        // Create institute data from the template context
+        allInstitutes = [
+            {% for institute in all_institutes %}
+            {
+                id: {{ institute.id }},
+                title: "{{ institute.title|escapejs }}",
+                category: "{{ institute.category.name|escapejs }}",
+                description: "{{ institute.description|escapejs }}",
+                location: "{{ institute.location|escapejs }}",
+                rank: "{{ institute.rank|escapejs }}",
+                department: "{{ institute.department|escapejs }}",
+                contact: "{{ institute.contact|escapejs }}",
+                status: "{{ institute.status }}",
+                nearby_hostels: "{{ institute.nearby_hostels|escapejs }}",
+                image_url: "{% if institute.images.first %}{{ institute.images.first.image.url }}{% else %}{% static 'Images/default.jpg' %}{% endif %}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+    }
+
+    // Search functionality
+    function setupSearch(inputElement, suggestionsElement, selectedElement, instituteNumber) {
+        inputElement.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length < 2) {
+                suggestionsElement.style.display = 'none';
+                return;
+            }
+
+            const filteredInstitutes = allInstitutes.filter(institute => 
+                institute.title.toLowerCase().includes(query) || 
+                institute.category.toLowerCase().includes(query) ||
+                institute.location.toLowerCase().includes(query)
+            );
+
+            displaySuggestions(filteredInstitutes, suggestionsElement, selectedElement, instituteNumber);
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!inputElement.contains(e.target) && !suggestionsElement.contains(e.target)) {
+                suggestionsElement.style.display = 'none';
+            }
+        });
+    }
+
+    function displaySuggestions(institutes, suggestionsElement, selectedElement, instituteNumber) {
+        if (institutes.length === 0) {
+            suggestionsElement.innerHTML = '<div class="suggestion-item">No institutes found</div>';
+        } else {
+            suggestionsElement.innerHTML = institutes.map(institute => 
+                `<div class="suggestion-item" data-id="${institute.id}">
+                    <strong>${institute.title}</strong><br>
+                    <small>${institute.category} - ${institute.location}</small>
+                </div>`
+            ).join('');
+            
+            // Add click event to suggestion items
+            suggestionsElement.querySelectorAll('.suggestion-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const instituteId = parseInt(this.getAttribute('data-id'));
+                    const institute = allInstitutes.find(inst => inst.id === instituteId);
+                    selectInstitute(institute, selectedElement, instituteNumber);
+                    suggestionsElement.style.display = 'none';
+                    inputElement.value = '';
+                });
+            });
+        }
+        
+        suggestionsElement.style.display = 'block';
+    }
+
+    function selectInstitute(institute, selectedElement, instituteNumber) {
+        if (instituteNumber === 1) {
+            selectedInstitute1 = institute;
+        } else {
+            selectedInstitute2 = institute;
+        }
+        
+        selectedElement.innerHTML = `
+            <h4>${institute.title}</h4>
+            <p><strong>Category:</strong> ${institute.category}</p>
+            <p><strong>Rank:</strong> ${institute.rank}</p>
+            <p><strong>Location:</strong> ${institute.location}</p>
+            <button class="remove-btn" data-institute="${instituteNumber}">
+                <i class="fas fa-times"></i> Remove
+            </button>
+        `;
+        selectedElement.style.display = 'block';
+        
+        // Add event to remove button
+        selectedElement.querySelector('.remove-btn').addEventListener('click', function() {
+            if (instituteNumber === 1) {
+                selectedInstitute1 = null;
+            } else {
+                selectedInstitute2 = null;
+            }
+            selectedElement.style.display = 'none';
+        });
+        
+        // Enable compare button if both institutes are selected
+        updateCompareButton();
+    }
+
+    function updateCompareButton() {
+        if (selectedInstitute1 && selectedInstitute2) {
+            compareBtn.disabled = false;
+            compareBtn.style.opacity = '1';
+        } else {
+            compareBtn.disabled = true;
+            compareBtn.style.opacity = '0.6';
+        }
+    }
+
+    // Compare functionality
+    compareBtn.addEventListener('click', function() {
+        if (!selectedInstitute1 || !selectedInstitute2) return;
+        
+        displayInstituteCards();
+        displayComparisonTable();
+        comparisonSection.style.display = 'block';
+        
+        // Scroll to comparison section
+        comparisonSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function displayInstituteCards() {
+        // Institute 1 card
+        instituteCard1.innerHTML = `
+            <div class="institute-header">
+                <div class="institute-title">${selectedInstitute1.title}</div>
+                <div class="institute-category">${selectedInstitute1.category}</div>
+                <div class="institute-status ${selectedInstitute1.status === 'Apply' ? 'status-apply' : 'status-closed'}">
+                    ${selectedInstitute1.status}
+                </div>
+            </div>
+            <div class="institute-body">
+                <img src="${selectedInstitute1.image_url}" alt="${selectedInstitute1.title}" class="institute-image" onerror="this.src='{% static 'Images/default.jpg' %}'">
+                <div class="institute-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">
+                            <div class="description-text">${selectedInstitute1.description}</div>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">${selectedInstitute1.location}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rank:</span>
+                        <span class="detail-value">${selectedInstitute1.rank}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Department:</span>
+                        <span class="detail-value">${selectedInstitute1.department}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contact:</span>
+                        <span class="detail-value">${selectedInstitute1.contact}</span>
+                    </div>
+                </div>
+                <a href="${instituteDetailUrl.replace('0', selectedInstitute1.id)}" class="view-more-btn">View Full Details</a>
+            </div>
+        `;
+        
+        // Institute 2 card
+        instituteCard2.innerHTML = `
+            <div class="institute-header">
+                <div class="institute-title">${selectedInstitute2.title}</div>
+                <div class="institute-category">${selectedInstitute2.category}</div>
+                <div class="institute-status ${selectedInstitute2.status === 'Apply' ? 'status-apply' : 'status-closed'}">
+                    ${selectedInstitute2.status}
+                </div>
+            </div>
+            <div class="institute-body">
+                <img src="${selectedInstitute2.image_url}" alt="${selectedInstitute2.title}" class="institute-image" onerror="this.src='{% static 'Images/default.jpg' %}'">
+                <div class="institute-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">
+                            <div class="description-text">${selectedInstitute2.description}</div>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">${selectedInstitute2.location}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rank:</span>
+                        <span class="detail-value">${selectedInstitute2.rank}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Department:</span>
+                        <span class="detail-value">${selectedInstitute2.department}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contact:</span>
+                        <span class="detail-value">${selectedInstitute2.contact}</span>
+                    </div>
+                </div>
+                <a href="${instituteDetailUrl.replace('0', selectedInstitute2.id)}" class="view-more-btn">View Full Details</a>
+            </div>
+        `;
+    }
+
+    function displayComparisonTable() {
+        const criteria = [
+            { name: "Rank", key: "rank", type: "rank" },
+            { name: "Location", key: "location", type: "text" },
+            { name: "Department Options", key: "department", type: "text" },
+            { name: "Status", key: "status", type: "status" },
+            { name: "Contact Availability", key: "contact", type: "text" },
+            { name: "Category", key: "category", type: "text" }
+        ];
+        
+        comparisonTable.innerHTML = criteria.map(criterion => {
+            const value1 = selectedInstitute1[criterion.key];
+            const value2 = selectedInstitute2[criterion.key];
+            
+            let winner1 = false;
+            let winner2 = false;
+            
+            // Determine winner based on criterion type
+            if (criterion.type === "rank") {
+                const rank1 = parseInt(value1);
+                const rank2 = parseInt(value2);
+                if (!isNaN(rank1) && !isNaN(rank2)) {
+                    winner1 = rank1 < rank2; // Lower rank is better
+                    winner2 = rank2 < rank1;
+                }
+            } else if (criterion.type === "status") {
+                winner1 = value1 === "Apply";
+                winner2 = value2 === "Apply";
+            }
+            
+            return `
+                <div class="comparison-row">
+                    <div class="criteria">${criterion.name}</div>
+                    <div class="institute-value ${winner1 ? 'winner' : ''}">${value1}</div>
+                    <div class="institute-value ${winner2 ? 'winner' : ''}">${value2}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Reset functionality
+    resetBtn.addEventListener('click', function() {
+        selectedInstitute1 = null;
+        selectedInstitute2 = null;
+        selected1.style.display = 'none';
+        selected2.style.display = 'none';
+        comparisonSection.style.display = 'none';
+        searchInput1.value = '';
+        searchInput2.value = '';
+        updateCompareButton();
+    });
+
+    // Initialize the page
+    function initializePage() {
+        // Initialize institutes data from Django context
+        initializeInstitutesData();
+        
+        // Setup search functionality
+        setupSearch(searchInput1, suggestions1, selected1, 1);
+        setupSearch(searchInput2, suggestions2, selected2, 2);
+        
+        // Initially disable compare button
+        updateCompareButton();
+    }
+
+    // Start the page initialization
+    initializePage();
+});
+</script>
+{% endblock %}

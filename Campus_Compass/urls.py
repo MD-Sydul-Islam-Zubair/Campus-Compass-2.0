@@ -22,6 +22,8 @@ urlpatterns = [
     path('clear-signup-session/', CC_views.clear_signup_session, name='clear_signup_session'),
     path('createuniversity/',CC_views.upload_institute, name='upload_institute'),
     path('createcircular/',CC_views.upload_circular, name='upload_circular'),
+     path('compare/', CC_views.institute_comparison, name='institute_comparison'),
+  
  
     # Authentication URLs - Using accounts/ prefix
     path('accounts/', include([

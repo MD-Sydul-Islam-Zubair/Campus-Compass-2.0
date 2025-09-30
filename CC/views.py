@@ -304,3 +304,13 @@ def upload_circular(request):
             return redirect('circulars')
     Context = {'form': form,}
     return render(request, template_name='CC/createcircular.html', context=Context)
+
+
+def institute_comparison(request):
+    # Get all institutes for the search functionality
+    all_institutes = InstituteInfo.objects.all().prefetch_related('images')
+    
+    context = {
+        'all_institutes': all_institutes,
+    }
+    return render(request, 'CC/Comparison.html', context)
