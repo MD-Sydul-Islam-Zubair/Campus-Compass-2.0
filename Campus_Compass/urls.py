@@ -29,6 +29,10 @@ urlpatterns = [
     path('accounts/signup/', CC_views.signup_view, name='signup'),
     path('accounts/profile/', CC_views.profile_view, name='profile'),
 
+    path('institute/<int:institute_id>/comment/', CC_views.add_comment, name='add_comment'),
+    path('comment/<int:comment_id>/edit/', CC_views.edit_comment, name='edit_comment'),
+    path('comment/<int:comment_id>/delete/', CC_views.delete_comment, name='delete_comment'),
+
 
 
 

@@ -119,4 +119,17 @@ def create_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
 
 
-     
+class Comment(models.Model):
+    institute = models.ForeignKey(InstituteInfo, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Comments"
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.institute.title}"

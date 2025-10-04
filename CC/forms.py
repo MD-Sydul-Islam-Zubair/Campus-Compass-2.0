@@ -39,25 +39,17 @@ class ProfileUpdateForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 3}),
         }
     
-    def clean_profile_pic(self):
-        profile_pic = self.cleaned_data.get('profile_pic')
-        if profile_pic:
-            # Check file size
-            if profile_pic.size > 2*1024*1024:  # 2MB limit
-                raise forms.ValidationError("Image file too large ( > 2MB )")
-            
-            # Check content type
-            if hasattr(profile_pic, 'file') and hasattr(profile_pic.file, 'content_type'):
-                content_type = profile_pic.file.content_type
-                if content_type not in ['image/jpeg', 'image/png']:
-                    raise forms.ValidationError("Only JPEG or PNG images allowed")
-            else:
-                # Handle case where the file doesn't have content_type
-                # You might want to check the file extension instead
-                name = profile_pic.name.lower()
-                if not name.endswith(('.jpg', '.jpeg', '.png')):
-                    raise forms.ValidationError("Only JPEG or PNG images allowed")
-        return profile_pic
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make all fields optional
+        for field in self.fields:
+            self.fields[field].required = False
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number == '':
+            return None
+        return phone_number
     
 class InstitiutionForm(ModelForm):
     class Meta:

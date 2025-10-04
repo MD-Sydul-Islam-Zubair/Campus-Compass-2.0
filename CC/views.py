@@ -49,6 +49,7 @@ def Universities(request):
 
 def institute_detail(request, institute_id):
     institute = get_object_or_404(InstituteInfo, pk=institute_id)
+    comments = institute.comments.all().select_related('user', 'user__profile')
     
     if request.method == 'POST':
         if 'action' in request.POST:
@@ -70,7 +71,10 @@ def institute_detail(request, institute_id):
                 messages.success(request, 'Institute deleted successfully!')
                 return redirect('Home')
     
-    return render(request, 'CC/institute_detail.html', {'institute': institute})
+    return render(request, 'CC/institute_detail.html', {
+        'institute': institute,
+        'comments': comments
+    })
 
 def Colleges(request):
     college_category = Category.objects.get(name="College")
@@ -296,3 +300,38 @@ def institute_comparison(request):
         'categories': categories,
     }
     return render(request, 'CC/Comparison.html', context)
+
+
+@login_required
+def add_comment(request, institute_id):
+    institute = get_object_or_404(InstituteInfo, pk=institute_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Comment.objects.create(
+                institute=institute,
+                user=request.user,
+                content=content
+            )
+            messages.success(request, 'Comment added successfully!')
+        return redirect('institute_detail', institute_id=institute_id)
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id, user=request.user)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            comment.content = content
+            comment.is_edited = True
+            comment.save()
+            messages.success(request, 'Comment updated successfully!')
+        return redirect('institute_detail', institute_id=comment.institute.id)
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id, user=request.user)
+    institute_id = comment.institute.id
+    comment.delete()
+    messages.success(request, 'Comment deleted successfully!')
+    return redirect('institute_detail', institute_id=institute_id)
