@@ -121,19 +121,51 @@ def circulars(request):
 
 
 @csrf_protect
-@transaction.atomic
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()        
-            login(request, user)      
-            messages.success(request, "Account created successfully!")
-            return redirect('Home')
+            try:
+                user = form.save()
+                login(request, user)      
+                messages.success(request, "Account created successfully!")
+                
+                # Check if it's an AJAX request
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': True, 
+                        'redirect_url': reverse('Home')
+                    })
+                else:
+                    return redirect('Home')
+                    
+            except Exception as e:
+                error_msg = f"Error creating account: {str(e)}"
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False, 
+                        'errors': [error_msg]
+                    })
+                else:
+                    messages.error(request, error_msg)
         else:
-            messages.error(request, "Invalid signup details.")
-    else:
-        form = CustomUserCreationForm()
+            # Form is invalid
+            errors = []
+            for field, field_errors in form.errors.items():
+                for error in field_errors:
+                    errors.append(f"{field}: {error}")
+            
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False, 
+                    'errors': errors
+                })
+            else:
+                for error in errors:
+                    messages.error(request, error)
+    
+    # If GET request or regular form submission with errors
+    form = CustomUserCreationForm()
     return render(request, 'CC/signup.html', {'form': form})
 
 
