@@ -1,7 +1,32 @@
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
-<a href="{% url 'signup' %}">Don't have an account?</a>
+<div class="login-box">
+  <h2>Login to Your Account</h2>
+
+  <!-- Show error messages here -->
+  {% if form.errors %}
+    <div class="alert alert-danger" style="color: red; font-size: 14px;">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.username.label_tag }}
+      {{ form.username }}
+    </div>
+    <div class="form-group">
+      {{ form.password.label_tag }}
+      {{ form.password }}
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+
+  <a href="{% url 'signup' %}">Don't have an account?</a>
+</div>
