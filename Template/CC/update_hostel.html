@@ -1,0 +1,874 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-blue: #1a3a8f;
+        --secondary-blue: #3a6fd9;
+        --light-blue: #98c1ff;
+        --lighter-blue: #e2edff;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(26, 58, 143, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(26, 58, 143, 0.2);
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+    }
+
+    /* Base Styles */
+    body {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--text-dark);
+        overflow-x: hidden;
+        min-height: 100vh;
+        position: relative;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edff 100%);
+    }
+
+    /* Main Container */
+    .update-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        background: var(--card-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.3s forwards;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Header Section */
+    .update-header {
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .header-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), 
+            rgba(255, 255, 255, 0.2) 0%, 
+            transparent 70%);
+        transition: all 0.3s ease-out;
+        pointer-events: none;
+    }
+
+    .update-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        position: relative;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.5s forwards;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .hostel-name {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    /* Form Container */
+    .form-container {
+        padding: 3rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--lighter-blue);
+    }
+
+    .section-title i {
+        color: var(--light-blue);
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #e1e1e1;
+        border-radius: 10px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .help-text {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .help-text i {
+        color: var(--light-blue);
+    }
+
+    /* Full Width Fields */
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    /* Image Upload Section */
+    .image-upload-section {
+        background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 2px dashed var(--card-border);
+    }
+
+    .current-images {
+        margin-bottom: 2rem;
+    }
+
+    .current-images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .image-preview {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: all 0.3s ease;
+    }
+
+    .image-preview:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(231, 76, 60, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .remove-image:hover {
+        background: var(--danger-color);
+        transform: scale(1.1);
+    }
+
+    .file-upload-area {
+        border: 2px dashed var(--light-blue);
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--primary-blue);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .file-upload-area.dragover {
+        border-color: var(--primary-blue);
+        background: var(--lighter-blue);
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+        color: var(--primary-blue);
+        margin-bottom: 1rem;
+    }
+
+    .file-list {
+        margin-top: 1rem;
+    }
+
+    .file-item {
+        background: white;
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .file-item i {
+        color: var(--primary-blue);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--lighter-blue);
+    }
+
+    .btn {
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    .btn-cancel {
+        background: #f1f1f1;
+        color: var(--text-dark);
+    }
+
+    .btn-cancel:hover {
+        background: #e1e1e1;
+        transform: translateY(-2px);
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        box-shadow: 0 5px 15px rgba(26, 58, 143, 0.3);
+    }
+
+    .btn-update:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 58, 143, 0.4);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    /* Form Errors */
+    .error-list {
+        background: #ffeaea;
+        color: var(--danger-color);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--danger-color);
+    }
+
+    .error-list ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .field-error {
+        color: var(--danger-color);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .field-error i {
+        font-size: 0.8rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .update-container {
+            margin: 1rem;
+            border-radius: 15px;
+        }
+        
+        .update-title {
+            font-size: 2rem;
+        }
+        
+        .form-container {
+            padding: 2rem 1.5rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .current-images-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+    }
+</style>
+
+<div class="update-container">
+    <!-- Header Section -->
+    <div class="update-header">
+        <div class="header-overlay" id="header-overlay"></div>
+        
+        <h1 class="update-title">
+            <i class="fas fa-edit"></i> Update Hostel
+        </h1>
+        <p class="hostel-name">{{ hostel.name }}</p>
+        <p style="opacity: 0.8;">Make changes to the hostel information</p>
+    </div>
+    
+    <!-- Form Container -->
+    <div class="form-container">
+        <!-- Display Form Errors -->
+        {% if form.errors %}
+        <div class="error-list animate__animated animate__slideInLeft">
+            <strong><i class="fas fa-exclamation-triangle"></i> Please correct the following errors:</strong>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field|title }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="update-form">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i> Basic Information
+                </h3>
+                
+                <div class="form-grid">
+                    <!-- Hostel Name -->
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">
+                            <i class="fas fa-home"></i> Hostel Name *
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.name.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label for="{{ form.location.id_for_label }}">
+                            <i class="fas fa-map-marker-alt"></i> Location *
+                        </label>
+                        {{ form.location }}
+                        {% if form.location.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.location.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Distance from Institute -->
+                    <div class="form-group">
+                        <label for="{{ form.distance_from_institute.id_for_label }}">
+                            <i class="fas fa-walking"></i> Distance from Institute *
+                        </label>
+                        {{ form.distance_from_institute }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> e.g., 0.5 km, 10 min walk
+                        </div>
+                        {% if form.distance_from_institute.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.distance_from_institute.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Rent Range -->
+                    <div class="form-group">
+                        <label for="{{ form.rent_range.id_for_label }}">
+                            <i class="fas fa-rupee-sign"></i> Rent Range *
+                        </label>
+                        {{ form.rent_range }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> e.g., ₹5000-₹8000/month
+                        </div>
+                        {% if form.rent_range.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.rent_range.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact & Details Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-address-card"></i> Contact & Details
+                </h3>
+                
+                <div class="form-grid">
+                    <!-- Contact Information -->
+                    <div class="form-group full-width">
+                        <label for="{{ form.contact_info.id_for_label }}">
+                            <i class="fas fa-phone"></i> Contact Information *
+                        </label>
+                        {{ form.contact_info }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> Include phone numbers, email, or contact person details
+                        </div>
+                        {% if form.contact_info.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.contact_info.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Amenities -->
+                    <div class="form-group full-width">
+                        <label for="{{ form.amenities.id_for_label }}">
+                            <i class="fas fa-star"></i> Amenities *
+                        </label>
+                        {{ form.amenities }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> List amenities separated by commas (e.g., WiFi, Laundry, Food, Security, Gym)
+                        </div>
+                        {% if form.amenities.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.amenities.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label for="{{ form.description.id_for_label }}">
+                            <i class="fas fa-align-left"></i> Description
+                        </label>
+                        {{ form.description }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> Provide a detailed description of the hostel facilities and environment
+                        </div>
+                        {% if form.description.errors %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ form.description.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Management Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-images"></i> Hostel Images
+                </h3>
+                
+                <div class="image-upload-section">
+                    <!-- Current Images -->
+                    {% if hostel.images.all %}
+                    <div class="current-images">
+                        <h4 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                            <i class="fas fa-image"></i> Current Images
+                        </h4>
+                        <div class="current-images-grid">
+                            {% for image in hostel.images.all %}
+                            <div class="image-preview">
+                                <img src="{{ image.image.url }}" alt="Hostel Image {{ forloop.counter }}">
+                                <button type="button" class="remove-image" data-image-id="{{ image.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Add New Images -->
+                    <div class="file-upload-area" id="file-drop-zone">
+                        <input type="file" name="images" id="images" multiple accept="image/*" style="display: none;">
+                        <div id="file-drop-content">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">
+                                Add New Images
+                            </h4>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                Click to select images or drag and drop here
+                            </p>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">
+                                Supported formats: JPEG, PNG, JPG | Multiple selection available
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="file-list" class="file-list"></div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <div>
+                    <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    
+                    
+                    <button type="submit" class="btn btn-update" id="submit-btn">
+                        <i class="fas fa-save"></i> Update Hostel
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Header overlay mouse effect
+    document.addEventListener('mousemove', function(e) {
+        const overlay = document.getElementById('header-overlay');
+        if (overlay) {
+            overlay.style.setProperty('--mouse-x', `${e.clientX}px`);
+            overlay.style.setProperty('--mouse-y', `${e.clientY}px`);
+        }
+    });
+
+    // File upload functionality
+    const fileInput = document.getElementById('images');
+    const fileDropZone = document.getElementById('file-drop-zone');
+    const fileDropContent = document.getElementById('file-drop-content');
+    const fileList = document.getElementById('file-list');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Click on drop zone to trigger file input
+    fileDropZone.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // Handle file selection
+    fileInput.addEventListener('change', function() {
+        updateFileList(this.files);
+    });
+
+    // Drag and drop functionality
+    fileDropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    fileDropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    fileDropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileList(e.dataTransfer.files);
+        }
+    });
+
+    function updateFileList(files) {
+        fileList.innerHTML = '';
+        
+        if (files.length > 0) {
+            fileDropContent.innerHTML = `
+                <div class="upload-icon">
+                    <i class="fas fa-check" style="color: var(--success-color);"></i>
+                </div>
+                <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">
+                    ${files.length} image(s) selected
+                </h4>
+                <p style="color: var(--text-light);">
+                    Click to change selection or drag new images
+                </p>
+            `;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <span>${file.name}</span>
+                    <span style="margin-left: auto; color: var(--text-light); font-size: 0.8rem;">
+                        ${formatFileSize(file.size)}
+                    </span>
+                `;
+                fileList.appendChild(fileItem);
+            }
+        } else {
+            fileDropContent.innerHTML = `
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">
+                    Add New Images
+                </h4>
+                <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                    Click to select images or drag and drop here
+                </p>
+                <p style="color: var(--text-light); font-size: 0.9rem;">
+                    Supported formats: JPEG, PNG, JPG | Multiple selection available
+                </p>
+            `;
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Image removal functionality
+    document.querySelectorAll('.remove-image').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const imageId = this.getAttribute('data-image-id');
+            const imagePreview = this.closest('.image-preview');
+            
+            if (confirm('Are you sure you want to remove this image?')) {
+                // Send AJAX request to delete the image
+                fetch(`/hostel/image/${imageId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        imagePreview.style.animation = 'slideIn 0.3s reverse';
+                        setTimeout(() => {
+                            imagePreview.remove();
+                            showNotification('Image removed successfully', 'success');
+                        }, 300);
+                    } else {
+                        showNotification('Error removing image', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error removing image', 'error');
+                });
+            }
+        });
+    });
+
+    // Form submission
+    document.getElementById('update-form').addEventListener('submit', function() {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Helper function to show notifications
+    function showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 300px;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            animation: slideInRight 0.3s ease;
+            background: ${type === 'success' ? 'rgba(39, 174, 96, 0.9)' : 'rgba(231, 76, 60, 0.9)'};
+            color: white;
+            border-left: 4px solid ${type === 'success' ? '#27ae60' : '#e74c3c'};
+        `;
+
+        document.body.appendChild(notification);
+
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Add CSS for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

@@ -38,6 +38,12 @@ urlpatterns = [
     path('bookmarks/', CC_views.bookmarked_institutes, name='bookmarks'),
 
 
+    path('institute/<int:institute_id>/create-hostel/', CC_views.create_hostel, name='create_hostel'),
+    path('hostel/<int:pk>/', CC_views.HostelDetailView.as_view(), name='hostel_detail'),
+    path('hostel/<int:hostel_id>/delete/', CC_views.delete_hostel, name='delete_hostel'),
+    path('hostel/<int:hostel_id>/update/', CC_views.update_hostel, name='update_hostel'),
+    path('hostel/image/<int:image_id>/delete/', CC_views.delete_hostel_image, name='delete_hostel_image'),
+
 
 
 

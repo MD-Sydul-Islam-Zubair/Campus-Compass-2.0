@@ -55,3 +55,14 @@ admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Profile)
 
 admin.site.register([Category, InstituteInfo, InstituteImage])
+
+class HostelImageInline(admin.TabularInline):
+    model = HostelImage
+    extra = 1
+
+@admin.register(Hostel)
+class HostelAdmin(admin.ModelAdmin):
+    list_display = ['name', 'institute', 'location', 'rent_range']
+    list_filter = ['institute']
+    search_fields = ['name', 'institute__title']
+    inlines = [HostelImageInline]

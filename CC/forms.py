@@ -67,3 +67,23 @@ class CircularForm(ModelForm):
     class Meta:
         model= Circular
         fields = '__all__'             
+
+
+class HostelForm(forms.ModelForm):
+    # Remove the custom file field and handle images separately in the view
+    class Meta:
+        model = Hostel
+        fields = ['name', 'location', 'distance_from_institute', 'contact_info', 
+                 'rent_range', 'amenities', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'amenities': forms.Textarea(attrs={'rows': 3, 'placeholder': 'WiFi, Laundry, Food, Security, etc.'}),
+            'contact_info': forms.Textarea(attrs={'rows': 3}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add help text to fields
+        self.fields['distance_from_institute'].help_text = 'e.g., 0.5 km, 10 min walk'
+        self.fields['rent_range'].help_text = 'e.g., ₹5000-₹8000/month'
+        self.fields['amenities'].help_text = 'List amenities separated by commas'

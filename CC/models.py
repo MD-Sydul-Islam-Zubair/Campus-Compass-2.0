@@ -16,7 +16,7 @@ class InstituteInfo(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.TextField()
     location = models.CharField(max_length=100)
-    nearby_hostels = models.CharField(max_length=100)
+    # REMOVE THIS LINE: nearby_hostels = models.CharField(max_length=100)
     rank = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     contact = models.TextField()
@@ -147,3 +147,30 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"{self.user.username} bookmarked {self.institute.title}"
+    
+
+class Hostel(models.Model):
+    name = models.CharField(max_length=200)
+    institute = models.ForeignKey(InstituteInfo, on_delete=models.CASCADE, related_name="nearby_hostels")
+    location = models.CharField(max_length=200)
+    distance_from_institute = models.CharField(max_length=100, help_text="e.g., 0.5 km, 10 min walk")
+    contact_info = models.TextField()
+    rent_range = models.CharField(max_length=100, help_text="e.g., ₹5000-₹8000/month")
+    amenities = models.TextField(help_text="Comma-separated amenities")
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Hostels"
+        ordering = ['distance_from_institute']
+
+    def __str__(self):
+        return f"{self.name} near {self.institute.title}"
+
+class HostelImage(models.Model):
+    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to='hostels/')
+    
+    def __str__(self):
+        return f"Image for {self.hostel.name}"

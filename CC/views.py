@@ -50,6 +50,7 @@ def Universities(request):
 def institute_detail(request, institute_id):
     institute = get_object_or_404(InstituteInfo, pk=institute_id)
     comments = institute.comments.all().select_related('user', 'user__profile')
+    nearby_hostels = institute.nearby_hostels.all().prefetch_related('images')
     
     # Check if user has bookmarked this institute
     is_bookmarked = False
@@ -65,7 +66,6 @@ def institute_detail(request, institute_id):
                 institute.title = request.POST.get('title')
                 institute.description = request.POST.get('description')
                 institute.location = request.POST.get('location')
-                institute.nearby_hostels = request.POST.get('nearby_hostels')
                 institute.rank = request.POST.get('rank')
                 institute.department = request.POST.get('department')
                 institute.contact = request.POST.get('contact')
@@ -92,6 +92,7 @@ def institute_detail(request, institute_id):
     return render(request, 'CC/institute_detail.html', {
         'institute': institute,
         'comments': comments,
+        'nearby_hostels': nearby_hostels,
         'is_bookmarked': is_bookmarked
     })
 
@@ -398,3 +399,120 @@ def bookmarked_institutes(request):
     return render(request, 'CC/bookmarks.html', {
         'bookmarked_institutes': bookmarked_institutes
     })
+
+
+from django.views.generic import DetailView
+from .forms import HostelForm
+@login_required
+def create_hostel(request, institute_id):
+    institute = get_object_or_404(InstituteInfo, pk=institute_id)
+    
+    if not request.user.is_staff:
+        messages.error(request, 'Only staff members can create hostels.')
+        return redirect('institute_detail', institute_id=institute_id)
+    
+    if request.method == 'POST':
+        hostel_form = HostelForm(request.POST)
+        
+        if hostel_form.is_valid():
+            # Create hostel instance but don't save to DB yet
+            hostel = hostel_form.save(commit=False)
+            hostel.institute = institute
+            hostel.save()
+            
+            # Debug: Check what files are being received
+            print("FILES received:", dict(request.FILES))
+            images = request.FILES.getlist('images')
+            print(f"Number of images received: {len(images)}")
+            
+            # Handle multiple image uploads
+            for i, image in enumerate(images):
+                print(f"Processing image {i+1}: {image.name}, size: {image.size}")
+                try:
+                    hostel_image = HostelImage.objects.create(hostel=hostel, image=image)
+                    print(f"Successfully created HostelImage: {hostel_image}")
+                except Exception as e:
+                    print(f"Error creating HostelImage: {e}")
+            
+            messages.success(request, f'Hostel "{hostel.name}" created successfully with {len(images)} images!')
+            return redirect('institute_detail', institute_id=institute_id)
+        else:
+            print("Form errors:", hostel_form.errors)
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        hostel_form = HostelForm()
+    
+    return render(request, 'CC/create_hostel.html', {
+        'form': hostel_form,
+        'institute': institute
+    })
+
+class HostelDetailView(DetailView):
+    model = Hostel
+    template_name = 'CC/hostel_detail.html'
+    context_object_name = 'hostel'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['similar_hostels'] = Hostel.objects.filter(
+            institute=self.object.institute
+        ).exclude(pk=self.object.pk)[:3]
+        return context
+
+@login_required
+def delete_hostel(request, hostel_id):
+    hostel = get_object_or_404(Hostel, pk=hostel_id)
+    institute_id = hostel.institute.id
+    
+    if not request.user.is_staff:
+        messages.error(request, 'Only staff members can delete hostels.')
+        return redirect('institute_detail', institute_id=institute_id)
+    
+    if request.method == 'POST':
+        hostel_name = hostel.name
+        hostel.delete()
+        messages.success(request, f'Hostel "{hostel_name}" deleted successfully!')
+    
+    return redirect('institute_detail', institute_id=institute_id)
+
+
+@login_required
+def update_hostel(request, hostel_id):
+    hostel = get_object_or_404(Hostel, pk=hostel_id)
+    
+    if not request.user.is_staff:
+        messages.error(request, 'Only staff members can update hostels.')
+        return redirect('hostel_detail', pk=hostel_id)
+    
+    if request.method == 'POST':
+        form = HostelForm(request.POST, instance=hostel)
+        if form.is_valid():
+            form.save()
+            
+            # Handle new image uploads
+            new_images = request.FILES.getlist('images')
+            for image in new_images:
+                HostelImage.objects.create(hostel=hostel, image=image)
+            
+            messages.success(request, f'Hostel "{hostel.name}" updated successfully!')
+            return redirect('hostel_detail', pk=hostel_id)
+    else:
+        form = HostelForm(instance=hostel)
+    
+    return render(request, 'CC/update_hostel.html', {
+        'form': form,
+        'hostel': hostel
+    })
+
+
+from django.http import JsonResponse
+
+@login_required
+def delete_hostel_image(request, image_id):
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Permission denied'})
+    
+    image = get_object_or_404(HostelImage, pk=image_id)
+    image.delete()
+    
+    return JsonResponse({'success': True})
