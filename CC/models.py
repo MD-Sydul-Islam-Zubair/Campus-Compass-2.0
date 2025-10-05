@@ -133,3 +133,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.institute.title}"
+    
+
+# Add this to your models.py after the Comment model
+class Bookmark(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    institute = models.ForeignKey(InstituteInfo, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'institute')  # Prevent duplicate bookmarks
+        verbose_name_plural = "Bookmarks"
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.institute.title}"

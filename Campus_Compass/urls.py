@@ -33,6 +33,12 @@ urlpatterns = [
     path('comment/<int:comment_id>/edit/', CC_views.edit_comment, name='edit_comment'),
     path('comment/<int:comment_id>/delete/', CC_views.delete_comment, name='delete_comment'),
 
+ # ... your existing URLs ...
+    path('institute/<int:institute_id>/toggle-bookmark/', CC_views.toggle_bookmark, name='toggle_bookmark'),
+    path('bookmarks/', CC_views.bookmarked_institutes, name='bookmarks'),
+
+
+
 
 
 

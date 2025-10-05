@@ -51,6 +51,14 @@ def institute_detail(request, institute_id):
     institute = get_object_or_404(InstituteInfo, pk=institute_id)
     comments = institute.comments.all().select_related('user', 'user__profile')
     
+    # Check if user has bookmarked this institute
+    is_bookmarked = False
+    if request.user.is_authenticated:
+        is_bookmarked = Bookmark.objects.filter(
+            user=request.user, 
+            institute=institute
+        ).exists()
+    
     if request.method == 'POST':
         if 'action' in request.POST:
             if request.POST['action'] == 'update' and request.user.is_staff:
@@ -62,18 +70,29 @@ def institute_detail(request, institute_id):
                 institute.department = request.POST.get('department')
                 institute.contact = request.POST.get('contact')
                 institute.status = request.POST.get('status')
-                institute.save()
-                messages.success(request, 'Institute updated successfully!')
-                return redirect('institute_detail', institute_id=institute.pk)
+                
+                try:
+                    institute.save()
+                    messages.success(request, 'Institute updated successfully!')
+                    return redirect('institute_detail', institute_id=institute.pk)
+                except Exception as e:
+                    messages.error(request, f'Error updating institute: {str(e)}')
+                    return redirect('institute_detail', institute_id=institute.pk)
                 
             elif request.POST['action'] == 'delete' and request.user.is_staff:
-                institute.delete()
-                messages.success(request, 'Institute deleted successfully!')
-                return redirect('Home')
+                try:
+                    institute_name = institute.title
+                    institute.delete()
+                    messages.success(request, f'Institute "{institute_name}" deleted successfully!')
+                    return redirect('Home')
+                except Exception as e:
+                    messages.error(request, f'Error deleting institute: {str(e)}')
+                    return redirect('institute_detail', institute_id=institute.pk)
     
     return render(request, 'CC/institute_detail.html', {
         'institute': institute,
-        'comments': comments
+        'comments': comments,
+        'is_bookmarked': is_bookmarked
     })
 
 def Colleges(request):
@@ -335,3 +354,47 @@ def delete_comment(request, comment_id):
     comment.delete()
     messages.success(request, 'Comment deleted successfully!')
     return redirect('institute_detail', institute_id=institute_id)
+
+
+
+# Add these imports at the top
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+
+# Add these views after the existing views
+@login_required
+@require_POST
+def toggle_bookmark(request, institute_id):
+    institute = get_object_or_404(InstituteInfo, pk=institute_id)
+    bookmark, created = Bookmark.objects.get_or_create(
+        user=request.user,
+        institute=institute
+    )
+    
+    if not created:
+        # If bookmark already exists, remove it (toggle off)
+        bookmark.delete()
+        is_bookmarked = False
+        message = 'Institute removed from bookmarks'
+    else:
+        is_bookmarked = True
+        message = 'Institute added to bookmarks'
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'is_bookmarked': is_bookmarked,
+            'message': message
+        })
+    
+    messages.success(request, message)
+    return redirect('institute_detail', institute_id=institute_id)
+
+@login_required
+def bookmarked_institutes(request):
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('institute')
+    bookmarked_institutes = [bookmark.institute for bookmark in bookmarks]
+    
+    return render(request, 'CC/bookmarks.html', {
+        'bookmarked_institutes': bookmarked_institutes
+    })
