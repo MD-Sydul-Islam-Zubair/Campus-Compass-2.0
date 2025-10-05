@@ -60,13 +60,31 @@ class InstitiutionForm(ModelForm):
 
 class InstituteForm(ModelForm):
     class Meta:
-        model= InstituteInfo
-        fields = '__all__'        
+        model = InstituteInfo
+        fields = '__all__'
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'contact': forms.Textarea(attrs={'rows': 3}),
+        }
 
+# Remove the custom file field and handle images separately in the view
+class InstituteForm(forms.ModelForm):
+    class Meta:
+        model = InstituteInfo
+        fields = ['title', 'category', 'description', 'location', 'rank', 'department', 'contact', 'status']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'contact': forms.Textarea(attrs={'rows': 3}),
+        }
+        
 class CircularForm(ModelForm):
     class Meta:
-        model= Circular
-        fields = '__all__'             
+        model = Circular
+        exclude = ['published_date']  # This field will be handled automatically
+        widgets = {
+            'details': forms.Textarea(attrs={'rows': 4}),
+            'programs': forms.Textarea(attrs={'rows': 3}),
+        }      
 
 
 class HostelForm(forms.ModelForm):
@@ -85,5 +103,5 @@ class HostelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Add help text to fields
         self.fields['distance_from_institute'].help_text = 'e.g., 0.5 km, 10 min walk'
-        self.fields['rent_range'].help_text = 'e.g., ₹5000-₹8000/month'
+        self.fields['rent_range'].help_text = 'e.g.,  ৳5000- ৳8000/month'
         self.fields['amenities'].help_text = 'List amenities separated by commas'

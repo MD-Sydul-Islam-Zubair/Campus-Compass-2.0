@@ -937,9 +937,10 @@
         <!-- Action Buttons -->
         {% if request.user.is_staff %}
         <div class="action-buttons">
-            <button class="action-btn update-btn" id="update-btn">
+            <!-- CHANGED: Update button now links to the new update page -->
+            <a href="{% url 'update_institute' institute.id %}" class="action-btn update-btn">
                 <i class="fas fa-edit"></i> Update Institute
-            </button>
+            </a>
             <button class="action-btn delete-btn" id="delete-btn">
                 <i class="fas fa-trash-alt"></i> Delete Institute
             </button>
@@ -1025,7 +1026,7 @@
                                     <i class="fas fa-walking"></i> {{ hostel.distance_from_institute }}
                                 </p>
                                 <p style="color: var(--success-color); font-weight: 600; margin-bottom: 1rem;">
-                                    <i class="fas fa-rupee-sign"></i> {{ hostel.rent_range }}
+                                    <i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ hostel.rent_range }}
                                 </p>
                                 
                                 <!-- Amenities without custom filter -->
@@ -1126,16 +1127,21 @@
                             </div>
                         </div>
                         
-                        {% if comment.user == user %}
+                        <!-- CHANGED: Enhanced comment deletion permissions -->
                         <div class="comment-actions">
+                            {% if comment.user == user %}
                             <button class="comment-action-btn edit-comment-btn" data-comment-id="{{ comment.id }}" data-comment-content="{{ comment.content }}">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
+                            {% endif %}
+                            
+                            <!-- Show delete button for comment owner OR admin -->
+                            {% if comment.user == user or request.user.is_staff %}
                             <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ comment.id }}">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                     
                     <div class="comment-content">
@@ -1160,70 +1166,6 @@
                 <i class="fas fa-arrow-left"></i> Back to Previous Page
             </a>
         </div>
-    </div>
-</div>
-
-<!-- Update Institute Modal -->
-<div class="modal-overlay" id="update-modal">
-    <div class="modal-content">
-        <button class="modal-close" id="update-close">&times;</button>
-        <h3 class="modal-title">Update Institute</h3>
-        <form method="post" class="modal-form" id="update-form" action="{% url 'institute_detail' institute_id=institute.id %}">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="update">
-            
-            <div class="form-columns">
-                <!-- Left Column -->
-                <div class="form-column">
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" id="title" name="title" value="{{ institute.title }}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" name="location" value="{{ institute.location }}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="rank">Rank</label>
-                        <input type="text" id="rank" name="rank" value="{{ institute.rank }}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact">Contact</label>
-                        <textarea id="contact" name="contact" required>{{ institute.contact }}</textarea>
-                    </div>
-                </div>
-                
-                <!-- Right Column -->
-                <div class="form-column">
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" required>{{ institute.description }}</textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="department">Department</label>
-                        <input type="text" id="department" name="department" value="{{ institute.department }}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" required>
-                            {% for choice in institute.status_choices %}
-                            <option value="{{ choice.0 }}" {% if choice.0 == institute.status %}selected{% endif %}>{{ choice.1 }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button type="button" class="modal-btn modal-btn-cancel" id="update-cancel">Cancel</button>
-                <button type="submit" class="modal-btn modal-btn-confirm">Update</button>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -1572,18 +1514,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Modal functionality for institute actions
-    const updateBtn = document.getElementById('update-btn');
     const deleteBtn = document.getElementById('delete-btn');
-    const updateModal = document.getElementById('update-modal');
     const deleteModal = document.getElementById('delete-modal');
 
     // Institute modal event listeners
-    if (updateBtn) {
-        updateBtn.addEventListener('click', () => {
-            updateModal.classList.add('active');
-        });
-    }
-
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
             deleteModal.classList.add('active');
@@ -1600,9 +1534,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Setup all modal close buttons
-    setupModalClose(document.getElementById('update-close'), updateModal);
     setupModalClose(document.getElementById('delete-close'), deleteModal);
-    setupModalClose(document.getElementById('update-cancel'), updateModal);
     setupModalClose(document.getElementById('delete-cancel'), deleteModal);
 
     // Comment modal functionality
@@ -1647,23 +1579,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close modals when clicking outside
     window.addEventListener('click', (e) => {
-        if (e.target === updateModal) updateModal.classList.remove('active');
         if (e.target === deleteModal) deleteModal.classList.remove('active');
         if (e.target === editCommentModal) editCommentModal.classList.remove('active');
         if (e.target === deleteCommentModal) deleteCommentModal.classList.remove('active');
     });
 
     // Form submission handling
-    const updateForm = document.getElementById('update-form');
     const deleteForm = document.getElementById('delete-form');
     const editCommentForm = document.getElementById('edit-comment-form');
     const deleteCommentForm = document.getElementById('delete-comment-form');
-
-    if (updateForm) {
-        updateForm.addEventListener('submit', function(e) {
-            // Let it submit normally
-        });
-    }
 
     if (deleteForm) {
         deleteForm.addEventListener('submit', function(e) {

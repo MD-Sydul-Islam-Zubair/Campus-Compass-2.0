@@ -304,6 +304,51 @@
         box-shadow: 0 6px 20px rgba(44, 62, 80, 0.4);
     }
     
+    /* Admin Button Styles */
+    .admin-add-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 5px 20px rgba(44, 62, 80, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .admin-add-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .admin-add-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .admin-add-btn:hover::before {
+        left: 100%;
+    }
+    
+    .admin-add-btn:active {
+        transform: translateY(-1px);
+    }
+    
     /* Button styles */
     .btn-outline-success {
         border-color: var(--primary-blue);
@@ -402,6 +447,11 @@
             padding: 0.3rem 0.8rem;
             font-size: 0.7rem;
         }
+        
+        .admin-add-btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 
@@ -412,10 +462,17 @@
     <h1 class="university-header">
         <span>Colleges</span>
     </h1>
-    <!-- Add University Button -->
-    <div class="text-center mb-5">
-        <a href="{% url 'upload_institute' %}" class="btn btn-outline-success">Add Colleges</a>
+    
+    <!-- Add College Button - Only visible to admins -->
+    {% if request.user.is_staff %}
+    <div class="text-center mb-5 animate__animated animate__fadeInUp" style="animation-delay: 0.7s;">
+        <a href="{% url 'upload_institute' %}" class="admin-add-btn">
+            <i class="fas fa-plus-circle"></i>
+            Add New College
+        </a>
+       
     </div>
+    {% endif %}
     
     <div class="row g-4">
         {% for institute in InstituteName %}
@@ -467,6 +524,26 @@
                     </div>
                 </div>
             </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="no-colleges-message">
+                <i class="fas fa-university" style="font-size: 4rem; color: var(--light-blue); margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--text-dark); margin-bottom: 1rem;">No Colleges Available</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem;">
+                    {% if request.user.is_staff %}
+                    Get started by adding the first college to the platform.
+                    {% else %}
+                    Check back later for college listings.
+                    {% endif %}
+                </p>
+                {% if request.user.is_staff %}
+                <a href="{% url 'upload_institute' %}" class="admin-add-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add First College
+                </a>
+                {% endif %}
+            </div>
         </div>
         {% endfor %}
     </div>

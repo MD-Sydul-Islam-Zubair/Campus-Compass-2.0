@@ -292,15 +292,78 @@ def search_results(request):
     return render(request, 'CC/search_results.html', context)
 
 
+@login_required
 def upload_institute(request):
-    form = InstituteForm()
+    if not request.user.is_staff:
+        messages.error(request, 'Only staff members can create institutes.')
+        return redirect('Home')
+    
     if request.method == 'POST':
-        form = InstituteForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
+        institute_form = InstituteForm(request.POST)
+        
+        if institute_form.is_valid():
+            # Create institute instance but don't save to DB yet
+            institute = institute_form.save(commit=False)
+            institute.save()
+            
+            # Handle multiple image uploads
+            images = request.FILES.getlist('images')
+            for image in images:
+                InstituteImage.objects.create(institute=institute, image=image)
+            
+            messages.success(request, f'Institute "{institute.title}" created successfully with {len(images)} images!')
             return redirect('Universities')
-    return render(request, template_name='CC/createuniversity.html', context={'form': form})
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        institute_form = InstituteForm()
+    
+    return render(request, 'CC/createuniversity.html', {
+        'form': institute_form
+    })
 
+
+@login_required
+def update_institute(request, institute_id):
+    institute = get_object_or_404(InstituteInfo, pk=institute_id)
+    
+    if not request.user.is_staff:
+        messages.error(request, 'Only staff members can update institutes.')
+        return redirect('institute_detail', institute_id=institute_id)
+    
+    if request.method == 'POST':
+        institute_form = InstituteForm(request.POST, instance=institute)
+        
+        if institute_form.is_valid():
+            # Update institute instance
+            institute = institute_form.save()
+            
+            # Handle new image uploads
+            new_images = request.FILES.getlist('images')
+            for image in new_images:
+                InstituteImage.objects.create(institute=institute, image=image)
+            
+            messages.success(request, f'Institute "{institute.title}" updated successfully!')
+            return redirect('institute_detail', institute_id=institute_id)
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        institute_form = InstituteForm(instance=institute)
+    
+    return render(request, 'CC/update_institute.html', {
+        'form': institute_form,
+        'institute': institute
+    })
+
+@login_required
+def delete_institute_image(request, image_id):
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Permission denied'})
+    
+    image = get_object_or_404(InstituteImage, pk=image_id)
+    image.delete()
+    
+    return JsonResponse({'success': True})
 
 def upload_circular(request):
     form = CircularForm()
@@ -350,10 +413,23 @@ def edit_comment(request, comment_id):
 
 @login_required
 def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, pk=comment_id, user=request.user)
+    comment = get_object_or_404(Comment, pk=comment_id)
     institute_id = comment.institute.id
+    
+    # Check if user has permission to delete this comment
+    if comment.user != request.user and not request.user.is_staff:
+        messages.error(request, 'You do not have permission to delete this comment.')
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Permission denied'})
+        return redirect('institute_detail', institute_id=institute_id)
+    
+    # User has permission, delete the comment
     comment.delete()
     messages.success(request, 'Comment deleted successfully!')
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    
     return redirect('institute_detail', institute_id=institute_id)
 
 

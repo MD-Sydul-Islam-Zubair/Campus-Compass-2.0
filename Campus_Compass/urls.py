@@ -19,9 +19,11 @@ urlpatterns = [
     path('search/', CC_views.search_results, name='search_results'),
     path('update_profile_pic/', CC_views.update_profile_pic, name='update_profile_pic'),
     path('clear-signup-session/', CC_views.clear_signup_session, name='clear_signup_session'),
-    path('createuniversity/', CC_views.upload_institute, name='upload_institute'),
+    path('createinstitute/', CC_views.upload_institute, name='upload_institute'),
     path('createcircular/', CC_views.upload_circular, name='upload_circular'),
     path('compare/', CC_views.institute_comparison, name='institute_comparison'),
+    path('institute/<int:institute_id>/update/', CC_views.update_institute, name='update_institute'),
+    path('institute/image/<int:image_id>/delete/', CC_views.delete_institute_image, name='delete_institute_image'),
 
     # Authentication URLs
     path('accounts/login/', CC_views.login_view, name='login'),
