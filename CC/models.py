@@ -174,3 +174,24 @@ class HostelImage(models.Model):
     
     def __str__(self):
         return f"Image for {self.hostel.name}"
+    
+
+class Notification(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    institute = models.ForeignKey(InstituteInfo, on_delete=models.CASCADE, null=True, blank=True)
+    circular = models.ForeignKey(Circular, on_delete=models.CASCADE, null=True, blank=True)
+    message = models.TextField()
+    notification_type = models.CharField(max_length=50, choices=[
+        ('new_circular', 'New Circular'),
+        ('institute_update', 'Institute Update'),
+        ('circular_update', 'Circular Update')
+    ])
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Notifications"
+
+    def __str__(self):
+        return f"Notification for {self.user.username} - {self.notification_type}"    

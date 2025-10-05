@@ -24,6 +24,15 @@ urlpatterns = [
     path('compare/', CC_views.institute_comparison, name='institute_comparison'),
     path('institute/<int:institute_id>/update/', CC_views.update_institute, name='update_institute'),
     path('institute/image/<int:image_id>/delete/', CC_views.delete_institute_image, name='delete_institute_image'),
+  
+    path('notifications/', CC_views.notifications_view, name='notifications'),
+    path('notifications/unread-count/', CC_views.get_unread_notification_count, name='unread_notification_count'),
+    path('notifications/<int:notification_id>/mark-read/', CC_views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', CC_views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    path('notifications/<int:notification_id>/delete/', CC_views.delete_notification, name='delete_notification'),
+    path('notifications/preview/', CC_views.notification_preview, name='notification_preview'),
+    path('notifications/<int:notification_id>/mark-unread/', CC_views.mark_notification_unread, name='mark_notification_unread'),
+path('notifications/clear-all/', CC_views.clear_all_notifications, name='clear_all_notifications'),
 
     # Authentication URLs
     path('accounts/login/', CC_views.login_view, name='login'),

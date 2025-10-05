@@ -832,13 +832,7 @@
 <!-- Particle Background -->
 <div id="particles-js"></div>
 
-<!-- Floating Add Button - Only visible to admins -->
-{% if request.user.is_staff %}
-<a href="{% url 'upload_circular' %}" class="floating-add-btn">
-    <i class="fas fa-plus"></i>
-    <span class="floating-tooltip">Add New Circular</span>
-</a>
-{% endif %}
+
 
 <div class="container py-5">
     <div class="text-center mb-5">

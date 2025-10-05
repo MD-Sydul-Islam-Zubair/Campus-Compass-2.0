@@ -592,3 +592,102 @@ def delete_hostel_image(request, image_id):
     image.delete()
     
     return JsonResponse({'success': True})
+
+
+from django.contrib.auth.decorators import user_passes_test
+from django.core.paginator import Paginator
+
+def staff_required(login_url=None):
+    return user_passes_test(lambda u: u.is_staff, login_url=login_url)
+
+
+@login_required
+@require_POST
+def mark_notification_unread(request, notification_id):
+    notification = get_object_or_404(Notification, pk=notification_id, user=request.user)
+    notification.is_read = False
+    notification.save()
+    return JsonResponse({'success': True})
+
+@login_required
+@require_POST
+def clear_all_notifications(request):
+    Notification.objects.filter(user=request.user).delete()
+    return JsonResponse({'success': True})
+
+@login_required
+def notifications_view(request):
+    notifications = Notification.objects.filter(user=request.user).select_related('institute', 'circular')
+    unread_count = notifications.filter(is_read=False).count()
+    
+    # Mark all as read when user visits notifications page
+    if request.method == 'GET':
+        unread_notifications = notifications.filter(is_read=False)
+        unread_notifications.update(is_read=True)
+        # Update the count after marking as read
+        unread_count = 0
+    
+    return render(request, 'CC/notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+@login_required
+def get_unread_notification_count(request):
+    if request.user.is_authenticated:
+        count = Notification.objects.filter(user=request.user, is_read=False).count()
+        return JsonResponse({'count': count})
+    return JsonResponse({'count': 0})
+
+@login_required
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, pk=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return JsonResponse({'success': True})
+
+@login_required
+def mark_all_notifications_read(request):
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'success': True})
+
+@login_required
+@require_POST
+def delete_notification(request, notification_id):
+    try:
+        notification = get_object_or_404(Notification, pk=notification_id, user=request.user)
+        notification.delete()
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'message': 'Notification deleted successfully'})
+        
+        messages.success(request, 'Notification deleted successfully!')
+        return redirect('notifications')
+        
+    except Exception as e:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': str(e)})
+        
+        messages.error(request, f'Error deleting notification: {str(e)}')
+        return redirect('notifications')
+    
+@login_required
+def notification_preview(request):
+    """Get recent notifications for dropdown preview"""
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).select_related('institute', 'circular')[:5]  # Last 5 notifications
+    
+    notifications_data = []
+    for notification in notifications:
+        notifications_data.append({
+            'id': notification.id,
+            'message': notification.message,
+            'is_read': notification.is_read,
+            'created_at': notification.created_at.isoformat(),
+            'type': notification.notification_type,
+        })
+    
+    return JsonResponse({
+        'notifications': notifications_data
+    })
