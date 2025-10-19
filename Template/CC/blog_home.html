@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-blue: #1a3a8f;
+        --secondary-blue: #3a6fd9;
+        --light-blue: #98c1ff;
+        --lighter-blue: #e2edff;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(26, 58, 143, 0.2);
+        --text-dark: #2c3e50;
+        --text-light: #7f8c8d;
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(26, 58, 143, 0.2);
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+    }
+
+    .blog-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeInUp 0.8s 0.3s forwards;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--primary-blue);
+        position: relative;
+        display: inline-block;
+    }
+
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+        border-radius: 2px;
+    }
+
+    .search-section {
+        background: var(--lighter-blue);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--card-border);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.2);
+    }
+
+    .create-post-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .create-post-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+        color: white;
+    }
+
+    .blog-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+        border-left: 4px solid var(--primary-blue);
+        transition: all 0.3s ease;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin-bottom: 1rem;
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    .category-badge {
+        background: var(--primary-blue);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .post-content {
+        color: var(--text-dark);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .post-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .tag {
+        background: var(--lighter-blue);
+        color: var(--primary-blue);
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .like-btn {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .like-btn:hover {
+        color: #e74c3c;
+    }
+
+    .like-btn.liked {
+        color: #e74c3c;
+    }
+
+    .read-more {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .read-more:hover {
+        color: var(--secondary-blue);
+    }
+
+    .no-posts {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-light);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="blog-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Student Blog & Advice</h1>
+        <p class="page-subtitle">Share your experiences and get advice from fellow students</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <form method="get" action="{% url 'blog_home' %}">
+                    <div class="position-relative">
+                        <input type="text" 
+                               class="search-input" 
+                               name="q" 
+                               placeholder="Search for advice, experiences, or topics..."
+                               value="{{ search_query }}">
+                        <i class="fas fa-search position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'create_blog_post' %}" class="create-post-btn">
+                        <i class="fas fa-plus"></i> Write a Post
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="create-post-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login to Post
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Posts -->
+    {% if posts %}
+        {% for post in posts %}
+            <div class="blog-card">
+                <h3 class="post-title">{{ post.title }}</h3>
+                
+                <div class="post-meta">
+                    <span><i class="fas fa-user"></i> {{ post.author.username }}</span>
+                    <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"M d, Y" }}</span>
+                    <span class="category-badge">{{ post.get_category_display }}</span>
+                </div>
+
+                <div class="post-content">
+                    {{ post.content|truncatewords:50 }}
+                </div>
+
+                {% if post.tags %}
+                    <div class="post-tags">
+                        {% for tag in post.get_tags_list %}
+                            <span class="tag">#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="post-actions">
+                    <form method="post" action="{% url 'like_blog_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="like-btn {% if user in post.likes.all %}liked{% endif %}">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ post.likes.count }} likes</span>
+                        </button>
+                    </form>
+                    
+                    <a href="{% url 'blog_post_detail' post.id %}" class="read-more">
+                        Read More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-posts">
+            <i class="fas fa-file-alt fa-3x mb-3" style="color: var(--text-light);"></i>
+            <h4>No posts found</h4>
+            <p>{% if search_query %}Try different search terms{% else %}Be the first to share your experience!{% endif %}</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth animations
+        const cards = document.querySelectorAll('.blog-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    });
+</script>
+{% endblock %}

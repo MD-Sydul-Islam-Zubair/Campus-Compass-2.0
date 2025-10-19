@@ -16,7 +16,7 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
 
-
+from .forms import BlogPostForm, BlogCommentForm
 
 
 from django.views.decorators.csrf import csrf_exempt  
@@ -888,6 +888,84 @@ def payment_fail(request):
 @csrf_exempt
 def payment_cancel(request):
     return render(request, 'CC/payment_cancel.html')
+
+
+
+
+# ================================
+#            Blogpost
+# ================================
+
+
+
+def blog_home(request):
+    posts = BlogPost.objects.all().order_by('-created_at')
+    
+    # Search functionality
+    query = request.GET.get('q')
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__icontains=query) |
+            Q(category__icontains=query)
+        )
+    
+    categories = BlogPost.objects.values_list('category', flat=True).distinct()
+    
+    context = {
+        'posts': posts,
+        'categories': categories,
+        'search_query': query or '',
+    }
+    return render(request, 'CC/blog_home.html', context)
+
+@login_required
+def create_blog_post(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            messages.success(request, 'Your post has been published successfully!')
+            return redirect('blog_home')
+    else:
+        form = BlogPostForm()
+    
+    return render(request, 'CC/create_blog_post.html', {'form': form})
+
+def blog_post_detail(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    comments = post.comments.all().order_by('-created_at')
+    
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment_form = BlogCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Comment added successfully!')
+            return redirect('blog_post_detail', post_id=post.id)
+    else:
+        comment_form = BlogCommentForm()
+    
+    context = {
+        'post': post,
+        'comments': comments,
+        'comment_form': comment_form,
+    }
+    return render(request, 'CC/blog_post_detail.html', context)
+
+@login_required
+def like_blog_post(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return redirect('blog_post_detail', post_id=post.id)
 
 
 

@@ -74,3 +74,28 @@ class HostelAdmin(admin.ModelAdmin):
     list_filter = ['institute']
     search_fields = ['name', 'institute__title']
     inlines = [HostelImageInline]
+
+
+
+
+
+
+
+
+   
+# ================================
+#            Blogpost
+# ================================
+
+
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'author', 'category', 'created_at']
+    list_filter = ['category', 'created_at']
+    search_fields = ['title', 'content', 'tags']
+
+@admin.register(BlogComment)
+class BlogCommentAdmin(admin.ModelAdmin):
+    list_display = ['post', 'author', 'created_at']
+    list_filter = ['created_at']    

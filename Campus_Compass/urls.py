@@ -69,6 +69,13 @@ urlpatterns = [
     path('subscribe/redirect/', views.subscribe_redirect, name='subscribe_redirect'),
 
 
+    # Blog URLs
+    path('blog/', views.blog_home, name='blog_home'),
+    path('blog/create/', views.create_blog_post, name='create_blog_post'),
+    path('blog/post/<int:post_id>/', views.blog_post_detail, name='blog_post_detail'),
+    path('blog/post/<int:post_id>/like/', views.like_blog_post, name='like_blog_post'),
+
+
     # Password change
     path('accounts/password_change/', auth_views.PasswordChangeView.as_view(
         template_name='CC/registration/password_change.html',

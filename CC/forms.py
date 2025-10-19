@@ -7,6 +7,8 @@ from django.forms import ModelForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
+from .models import BlogPost, BlogComment
+
 User = get_user_model()
 
 # forms.py
@@ -105,3 +107,31 @@ class HostelForm(forms.ModelForm):
         self.fields['distance_from_institute'].help_text = 'e.g., 0.5 km, 10 min walk'
         self.fields['rent_range'].help_text = 'e.g.,  ৳5000- ৳8000/month'
         self.fields['amenities'].help_text = 'List amenities separated by commas'
+
+
+
+
+     
+# ================================
+#            Blogpost
+# ================================
+
+
+class BlogPostForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'content', 'category', 'tags']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter post title'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Share your experience or advice...'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'tags': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., study tips, admission, campus life'}),
+        }
+
+class BlogCommentForm(forms.ModelForm):
+    class Meta:
+        model = BlogComment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Write your comment...'}),
+        }      

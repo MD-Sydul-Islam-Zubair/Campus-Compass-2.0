@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    .blog-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(26, 58, 143, 0.2);
+    }
+
+    .post-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(26, 58, 143, 0.2);
+    }
+
+    .post-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a3a8f;
+        margin-bottom: 1rem;
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        color: #7f8c8d;
+    }
+
+    .category-badge {
+        background: #1a3a8f;
+        color: white;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .post-content {
+        color: #2c3e50;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .post-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .tag {
+        background: #e2edff;
+        color: #1a3a8f;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .actions-section {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .like-btn {
+        background: none;
+        border: none;
+        color: #7f8c8d;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .like-btn:hover {
+        color: #e74c3c;
+    }
+
+    .like-btn.liked {
+        color: #e74c3c;
+    }
+
+    .comments-section {
+        margin-top: 2rem;
+    }
+
+    .comment-form {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .comment {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 3px solid #1a3a8f;
+    }
+
+    .comment-meta {
+        display: flex;
+        justify-content: between;
+        margin-bottom: 0.5rem;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: #1a3a8f;
+    }
+
+    .comment-date {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="blog-container">
+    <!-- Post Header -->
+    <div class="post-header">
+        <h1 class="post-title">{{ post.title }}</h1>
+        
+        <div class="post-meta">
+            <span><i class="fas fa-user"></i> {{ post.author.username }}</span>
+            <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"F d, Y" }}</span>
+            <span class="category-badge">{{ post.get_category_display }}</span>
+        </div>
+
+        {% if post.tags %}
+            <div class="post-tags">
+                {% for tag in post.get_tags_list %}
+                    <span class="tag">#{{ tag }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Post Content -->
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-section">
+        <form method="post" action="{% url 'like_blog_post' post.id %}">
+            {% csrf_token %}
+            <button type="submit" class="like-btn {% if user in post.likes.all %}liked{% endif %}">
+                <i class="fas fa-heart"></i>
+                {{ post.likes.count }} Likes
+            </button>
+        </form>
+        
+        <span><i class="fas fa-comments"></i> {{ post.comments.count }} Comments</span>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+        <h3><i class="fas fa-comments me-2"></i>Comments</h3>
+
+        <!-- Comment Form -->
+        {% if user.is_authenticated %}
+            <div class="comment-form">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Add a comment</label>
+                        {{ comment_form.content }}
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Post Comment
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <a href="{% url 'login' %}" class="text-decoration-none">Login</a> to post a comment.
+            </div>
+        {% endif %}
+
+        <!-- Comments List -->
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-meta">
+                        <span class="comment-author">{{ comment.author.username }}</span>
+                        <span class="comment-date">{{ comment.created_at|timesince }} ago</span>
+                    </div>
+                    <div class="comment-content">{{ comment.content|linebreaks }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-comments fa-2x mb-2"></i>
+                <p>No comments yet. Be the first to comment!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

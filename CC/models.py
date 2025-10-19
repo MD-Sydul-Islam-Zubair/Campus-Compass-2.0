@@ -242,5 +242,42 @@ class PaymentSession(models.Model):
 
 
 
+# ================================
+#            Blogpost
+# ================================
+
+
+
+class BlogPost(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    category = models.CharField(max_length=100, choices=[
+        ('University', 'University Experience'),
+        ('college', 'College Experience'), 
+        ('advice', 'Study Advice'),
+        ('career', 'Career Guidance'),
+        ('other', 'Other')
+    ])
+    tags = models.CharField(max_length=300, help_text="Comma separated tags")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(User, related_name='blog_likes', blank=True)
+    
+    def __str__(self):
+        return self.title
+    
+    def get_tags_list(self):
+        return [tag.strip() for tag in self.tags.split(',')]
+
+class BlogComment(models.Model):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Comment by {self.author} on {self.post.title}"
+
 
 
