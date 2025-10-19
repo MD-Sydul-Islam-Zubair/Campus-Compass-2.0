@@ -6,6 +6,10 @@ from CC import views as CC_views
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
+
+from CC import views
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -32,7 +36,7 @@ urlpatterns = [
     path('notifications/<int:notification_id>/delete/', CC_views.delete_notification, name='delete_notification'),
     path('notifications/preview/', CC_views.notification_preview, name='notification_preview'),
     path('notifications/<int:notification_id>/mark-unread/', CC_views.mark_notification_unread, name='mark_notification_unread'),
-path('notifications/clear-all/', CC_views.clear_all_notifications, name='clear_all_notifications'),
+    path('notifications/clear-all/', CC_views.clear_all_notifications, name='clear_all_notifications'),
 
     # Authentication URLs
     path('accounts/login/', CC_views.login_view, name='login'),
@@ -57,6 +61,12 @@ path('notifications/clear-all/', CC_views.clear_all_notifications, name='clear_a
 
 
 
+
+    path('subscribe/', views.initiate_payment, name='initiate_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/fail/', views.payment_fail, name='payment_fail'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    path('subscribe/redirect/', views.subscribe_redirect, name='subscribe_redirect'),
 
 
     # Password change

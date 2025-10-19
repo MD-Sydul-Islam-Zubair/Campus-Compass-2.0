@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Failed - Campus Compass</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 5rem;
+        }
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .troubleshoot-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="error-container">
+                    <i class="fas fa-exclamation-triangle error-icon"></i>
+                    <h1 class="text-danger mb-3">❌ Payment Failed</h1>
+                    
+                    <p class="lead text-muted mb-4">
+                        We couldn't process your payment. Don't worry, you can try again or contact support.
+                    </p>
+
+                    <div class="troubleshoot-box">
+                        <h5><i class="fas fa-lightbulb me-2 text-warning"></i>Quick Tips:</h5>
+                        <ul class="mb-0">
+                            <li>Check your card details</li>
+                            <li>Ensure sufficient balance</li>
+                            <li>Try a different payment method</li>
+                            <li>Contact your bank if issues persist</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'initiate_payment' %}" class="btn btn-danger btn-lg px-4">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </a>
+                        <a href="{% url 'Home' %}" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-home me-2"></i>Return Home
+                        </a>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            Need help? <a href="#" class="text-decoration-none">Contact Support</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

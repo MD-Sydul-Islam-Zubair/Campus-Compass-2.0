@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Cancelled - Campus Compass</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .cancel-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 5rem;
+        }
+        .cancel-icon {
+            font-size: 5rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .features-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .feature-item {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="cancel-container">
+                    <i class="fas fa-pause-circle cancel-icon"></i>
+                    <h1 class="text-secondary mb-3">⏸️ Payment Cancelled</h1>
+                    
+                    <p class="lead text-muted mb-4">
+                        You cancelled the payment process. No charges were made to your account.
+                    </p>
+
+                    <div class="features-preview">
+                        <h4 class="mb-3">What you're missing:</h4>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line me-2"></i>Advanced Institute Comparison
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-filter me-2"></i>Smart Filtering System
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-crown me-2"></i>Premium Features Access
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-bolt me-2"></i>Faster Performance
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'initiate_payment' %}" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-credit-card me-2"></i>Complete Subscription
+                        </a>
+                        <a href="{% url 'Home' %}" class="btn btn-outline-primary btn-lg px-4">
+                            <i class="fas fa-home me-2"></i>Return Home
+                        </a>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            Changed your mind? You can subscribe anytime!
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

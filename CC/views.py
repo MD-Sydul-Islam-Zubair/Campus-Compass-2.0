@@ -16,6 +16,26 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
 
+
+
+
+from django.views.decorators.csrf import csrf_exempt  
+
+from sslcommerz_lib import SSLCOMMERZ
+from .models import Subscription
+
+
+from .models import InstituteInfo, Category, Profile
+
+import django.urls
+original_reverse = django.urls.reverse
+
+import time
+
+
+
+
+
 # ------------------ Basic Views ------------------
 
 def home_redirect(request):
@@ -691,3 +711,200 @@ def notification_preview(request):
     return JsonResponse({
         'notifications': notifications_data
     })
+
+
+
+
+# ================================
+#       SSLCommerz Payment 
+# ================================
+
+
+
+def debug_reverse(viewname, *args, **kwargs):
+    if viewname == '':
+        print("=== EMPTY REVERSE DETECTED ===")
+        import traceback
+        traceback.print_stack()  # This will show where it's called from
+    return original_reverse(viewname, *args, **kwargs)
+
+django.urls.reverse = debug_reverse
+
+
+
+@login_required
+def institute_comparison(request):
+    print("=== COMPARE PAGE DEBUG ===")
+    print(f"User: {request.user.username}")
+    print(f"User ID: {request.user.id}")
+    
+    # Check subscription
+    try:
+        subscription = Subscription.objects.get(user=request.user)
+        print(f"✅ Subscription found: is_subscribed = {subscription.is_subscribed}")
+        is_subscribed = subscription.is_subscribed
+    except Subscription.DoesNotExist:
+        print("❌ NO subscription found for user")
+        is_subscribed = False
+    
+    all_institutes = InstituteInfo.objects.all().prefetch_related('images')
+    categories = Category.objects.all()
+
+    print(f"Final is_subscribed: {is_subscribed}")
+
+    context = {
+        'all_institutes': all_institutes,
+        'categories': categories,
+        'is_subscribed': is_subscribed,
+    }
+    return render(request, 'CC/Comparison.html', context)
+
+
+
+
+@login_required
+def subscribe_redirect(request):
+    return render(request, 'CC/subscribe_redirect.html')
+
+
+
+@login_required
+def initiate_payment(request):
+
+    print("=== DEBUG: Starting initiate_payment ===")
+    
+    try:
+        store_id = settings.SSL_COMMERZ_STORE_ID
+        store_pass = settings.SSL_COMMERZ_STORE_PASS
+        is_sandbox = getattr(settings, 'SSL_COMMERZ_IS_SANDBOX', True)
+
+        # Create unique transaction ID
+        tran_id = f"CC{request.user.id}_{int(time.time())}"
+        
+        # Store payment session in database
+        payment_session = PaymentSession.objects.create(
+            user=request.user,
+            transaction_id=tran_id
+        )
+        
+        print(f"💰 Stored payment session: User {request.user.id}, Transaction: {tran_id}")
+
+        sslcz = SSLCOMMERZ({
+            'store_id': store_id,
+            'store_pass': store_pass,
+            'issandbox': is_sandbox
+        })
+
+        base_url = request.build_absolute_uri('/')
+        
+        post_body = {
+            'total_amount': 200.00,
+            'currency': "BDT",
+            'tran_id': tran_id,
+            'success_url': f"{base_url}payment/success/",
+            'fail_url': f"{base_url}payment/fail/", 
+            'cancel_url': f"{base_url}payment/cancel/",
+            'emi_option': 0,
+            'cus_name': request.user.username,
+            'cus_email': request.user.email,
+            'cus_add1': "Dhaka",
+            'cus_city': "Dhaka",
+            'cus_country': "Bangladesh",
+            'cus_postcode': "1207", 
+            'cus_phone': "01700000000",
+            'shipping_method': "NO",
+            'product_name': "Campus Compass Premium",
+            'product_category': "Subscription",
+            'product_profile': "general"
+        }
+
+        response = sslcz.createSession(post_body)
+
+        if response.get('GatewayPageURL'):
+            print("✅ SUCCESS: Redirecting to Gateway...")
+            return redirect(response['GatewayPageURL'])
+        else:
+            print("❌ FAILED: No Gateway URL in response")
+            messages.error(request, f"Payment failed: {response.get('failedreason', 'Unknown error')}")
+            return redirect('Home')
+            
+    except Exception as e:
+        print(f"❌ EXCEPTION: {e}")
+        messages.error(request, f"Payment error: {str(e)}")
+        return redirect('Home')
+
+
+
+@csrf_exempt
+def payment_success(request):
+    try:
+        print("🎯 Payment success callback received")
+        
+        # SSLCommerz sends transaction data in POST request
+        transaction_id = request.POST.get('tran_id')
+        print(f"📋 Transaction ID from SSLCommerz: {transaction_id}")
+        
+        if transaction_id:
+            # Find the payment session
+            try:
+                payment_session = PaymentSession.objects.get(transaction_id=transaction_id)
+                user = payment_session.user
+                
+                print(f"✅ Found user: {user.username}")
+                
+                # Create or update subscription
+                subscription, created = Subscription.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        'is_subscribed': True,
+                        'plan_name': 'Premium'
+                    }
+                )
+                
+                # Mark payment as completed
+                payment_session.is_completed = True
+                payment_session.save()
+                
+                if created:
+                    print("🎉 New subscription created")
+                else:
+                    print("🔄 Existing subscription updated")
+                    
+            except PaymentSession.DoesNotExist:
+                print("❌ Payment session not found")
+        else:
+            print("❌ No transaction ID received")
+        
+        return render(request, 'CC/payment_success.html')
+        
+    except Exception as e:
+        print(f"💥 Payment success error: {e}")
+        return render(request, 'CC/payment_success.html')
+
+@csrf_exempt
+def payment_fail(request):
+    return render(request, 'CC/payment_failed.html')
+
+@csrf_exempt
+def payment_cancel(request):
+    return render(request, 'CC/payment_cancel.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
