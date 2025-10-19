@@ -157,3 +157,23 @@ EMAIL_HOST_USER = 'your@email.com'
 EMAIL_HOST_PASSWORD = 'yourpassword'
 DEFAULT_FROM_EMAIL = 'your@email.com'
 
+
+
+
+
+# ================================
+# SSLCommerz Payment Configuration
+# ================================
+
+SSL_COMMERZ_STORE_ID = "campu68f23efc9d17b"
+SSL_COMMERZ_STORE_PASS = "campu68f23efc9d17b@ssl"
+SSL_COMMERZ_IS_SANDBOX = True
+
+
+
+
+
+
+
+
+

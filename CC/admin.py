@@ -7,6 +7,14 @@ from .models import Profile
 
 # Register your models here.
 
+
+
+admin.site.register(Subscription) 
+
+admin.site.register(PaymentSession)
+
+
+
 @admin.register(Circular)
 class CircularAdmin(admin.ModelAdmin):
     list_display = ('title', 'institute', 'admission_period', 'published_date', 'is_active')

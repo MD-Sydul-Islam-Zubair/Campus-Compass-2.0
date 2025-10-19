@@ -6,6 +6,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
+
+
+from django.contrib.auth.models import User
+from datetime import date, timedelta
+
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     def __str__(self):
@@ -195,3 +202,45 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.username} - {self.notification_type}"    
+
+
+
+
+
+
+# ================================
+#       SSLCommerz Payment 
+# ================================
+
+    
+class Subscription(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_subscribed = models.BooleanField(default=False)
+    plan_name = models.CharField(max_length=100, default="Free")
+    expiry_date = models.DateField(null=True, blank=True)
+
+    def activate_subscription(self):
+        self.is_subscribed = True
+        self.plan_name = "Premium"
+        self.expiry_date = date.today() + timedelta(days=30)
+        self.save()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.plan_name}"
+
+
+class PaymentSession(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    transaction_id = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.transaction_id}"
+
+
+
+
+
+
+
